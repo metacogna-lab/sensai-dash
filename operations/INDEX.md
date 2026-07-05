@@ -1,19 +1,22 @@
 ---
 status: active
-active_engagement: compilar
+active_engagement: isolation_demo
 last_checkpoint: 2026-07-05
 ---
 
 # Sensai Compilar — Global Wiki Home
 
-> **TL;DR:** Multi-tenant harness (v2.20) is built and verified. One engagement exists
-> (`compilar`, active, empty). Pipeline commands always operate on the active engagement only.
+> **TL;DR:** Harness (v2.20) is built and verified, including per-engagement standalone git
+> repos with automatic Work Block commits. Two engagements exist: `compilar` (has processed one
+> demo corpus) and `isolation_demo` (a deliberate second tenant, created live to verify
+> isolation — see its `INDEX.md`).
 
 ## Engagement Registry
 
 | Engagement | Directive (one line) | Status | Wiki home |
 | :--- | :--- | :--- | :--- |
-| **compilar** ← active | Transform raw research into computational models and economic value | Awaiting first corpus | [engagements/compilar/INDEX.md](engagements/compilar/INDEX.md) |
+| compilar | Transform raw research into computational models and economic value | Consumed one demo corpus | [engagements/compilar/INDEX.md](engagements/compilar/INDEX.md) |
+| **isolation_demo** ← active | Verify per-engagement repo isolation (no research content) | Verification in progress | [engagements/isolation_demo/INDEX.md](engagements/isolation_demo/INDEX.md) |
 
 - Switch tenants with `/switch <name>`; create one with `/init-engagement <name>`.
 - The active pointer lives in [.active_engagement](.active_engagement); the gate hook quarantines
