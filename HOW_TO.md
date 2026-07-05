@@ -45,6 +45,25 @@ at exactly the points that need human judgment.
    which one is active. Each engagement's own `INDEX.md` is its live dashboard — the Run Status
    table's **Blockers column literally tells you what to do next**.
 
+## First run (see it work, before you bring your own corpus)
+
+A short demo text ships in every fresh checkout so you can watch one artifact become a Node
+without hunting for a source file first:
+
+```bash
+cp operations/engagements/compilar/samples/demo_corpus.txt \
+   operations/engagements/compilar/research_body/01_raw/
+```
+
+Then, in Claude Code: `/consume demo_corpus.txt`. In under a minute you'll have a real
+`node--demo-corpus.md` in `research_body/02_nodes/`, a `CONSUME` line in the ledger, and the
+engagement's `INDEX.md` updated — the whole gate → agent → ledger → wiki loop, without waiting on
+`/question`, a real strategic outcome, or your own corpus. This is a good moment to also try the
+gate's rejection path on purpose: hand-edit the node to delete its `status:` line and re-save it
+outside Claude Code — nothing enforces the schema on a manual edit, which is exactly the point of
+`operations/guides/01_EDITING.md`'s sanctioned-override section. When you're ready for a real run,
+continue below; the demo corpus's node can stay or be deleted, it doesn't block anything.
+
 ## A full run, step by step
 
 Using the default `compilar` engagement (or `/init-engagement my_domain` for a fresh one):

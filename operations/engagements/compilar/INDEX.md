@@ -7,9 +7,11 @@ last_checkpoint: 2026-07-05
 
 # Engagement: compilar — Wiki Home
 
-> **TL;DR:** No research ingested yet. Start by dropping sources into `research_body/00_inbox/`
+> **TL;DR:** No real research ingested yet. Start by dropping sources into `research_body/00_inbox/`
 > (PDFs) or `research_body/01_raw/` (text) and running `/question` with your stated strategic
-> outcome. (Make sure this engagement is active: `/switch compilar`.)
+> outcome. (Make sure this engagement is active: `/switch compilar`.) Want to see the pipeline
+> work first? A ready-to-consume demo corpus lives in [samples/](samples/demo_corpus.txt) — see
+> "First run" in [HOW_TO.md](../../../../HOW_TO.md).
 
 This file is the engagement's index-first entry point: skim it, then drill into linked artifacts.
 Every pipeline skill updates the relevant section here as part of its Work Block — if an artifact
@@ -22,7 +24,7 @@ this engagement's folder.
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | QUESTION | `/question` | strategist (fable) | — | 0 | Awaiting stated outcome |
 | EXTRACT | `/extract` | — (pdftotext) | 0 inbox | 0 | None |
-| CONSUME | `/consume` | consumer (haiku) | 0 raw | 0 | None |
+| CONSUME | `/consume` | consumer (haiku) | 0 raw | 1 | None |
 | INDEX | `/index` | indexer (sonnet) | — | 0 | Needs nodes |
 | ANALYZE | `/analyze` | analyst (sonnet) | 0 nodes | 0 | Needs `goals/research_questions.md` |
 | EVALUATE | `/evaluate` | evaluator (opus) | 0 | 0 | Needs a theory |
@@ -42,7 +44,9 @@ Latest audit: none yet. Latest longitudinal report: none yet.
 ## Corpus (research_body/)
 - Inbox (binary, pre-extraction): empty
 - Raw (text, pre-consumption): empty
-- Nodes: none yet
+- Nodes: [node--demo-corpus.md](research_body/02_nodes/node--demo-corpus.md) — "The honeybee
+  waggle dance is a stereotyped, symbolic movement pattern that encodes direction and distance of
+  a food source." (demo corpus, WB-001 — see [samples/](samples/demo_corpus.txt))
 - Corpus map / baseline: **not yet built** — run `/index` after consuming
 - **Quarantine queue (human review required):** empty
 
