@@ -17,7 +17,6 @@ This is the EVALUATE phase. Argument: a theory filename in `<eng>/outcomes/01_th
 5. If the hook blocks the write, read the reason, re-invoke the evaluator with that feedback
    (explicitly ask it to name a concrete mechanism), and rewrite.
 6. Update `<eng>/INDEX.md`: the economic model with its monetization vector one-liner.
-7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[EVALUATE] WB-<id>: <one-line summary of the monetization vector>"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.
 
 Recommend `/stress-test` on the new model before it feeds `/synthesize` or `/broadcast`.

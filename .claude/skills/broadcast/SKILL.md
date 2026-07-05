@@ -19,8 +19,10 @@ This is the BROADCAST phase. Argument: a filename in `<eng>/outcomes/02_economic
 5. If the hook blocks the write, read the reason, re-invoke the broadcaster with that feedback, and
    rewrite.
 6. Update `<eng>/INDEX.md`: the broadcast piece under outcomes.
-7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[BROADCAST] WB-<id>: <one-line summary of what was published>"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block
+   automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself.
+   Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your
+   report to the operator.
 8. **Human sign-off (mandatory — the third HITL point, alongside quarantine and FAIL verdicts):**
    after writing the broadcast file, show its full content to the operator directly in your
    response and explicitly ask them to confirm before treating the Work Block as done. This gate

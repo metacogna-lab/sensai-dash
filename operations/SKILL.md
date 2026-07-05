@@ -2,8 +2,8 @@
 
 Every new pipeline phase is a pair: a native subagent in `.claude/agents/*.md` (the cognitive work,
 model-routed) and a native skill in `.claude/skills/<name>/SKILL.md` (the orchestration: read
-inputs, invoke the agent, write the output, let the hook gate it, commit). New phases must follow
-this standard.
+inputs, invoke the agent, write the output, let the hook gate it and commit it). New phases must
+follow this standard.
 
 ## 1. Structural Requirements
 
@@ -34,16 +34,26 @@ without converging.
 
 ## 3. Logging & Commit
 
-Do not append to `operations/telemetry/execution.log` by hand from within a skill's own reasoning —
-the `PostToolUse` hook does it for every Write-tool write into a gated directory. A skill's job
-after a successful write is only to read the last line for the `WB-ID`, update `INDEX.md`, and
-issue the commit. One skill invocation = one commit.
+Do not append to `<eng>/telemetry/execution.log` by hand from within a skill's own reasoning —
+`.claude/scripts/append_log.sh` does it for every Write-tool write into a gated directory (called
+by the `PostToolUse` hook). That same script **also commits the Work Block automatically**, inside
+the owning engagement's own git repository — never the harness repo, and never something a skill
+does itself with `git add`/`git commit`. A skill's job after a successful write is only to update
+`INDEX.md` and, if it needs the `WB-ID` for its report to the operator, read the last line of the
+ledger. One skill invocation = one Work Block = one automatic commit.
 
 **Sole exception — Bash-created files:** the Write hook cannot see files produced by Bash commands
 (e.g. `/extract` running `pdftotext`). A phase that writes via Bash must gate its own output
 (verify non-empty, well-formed) and log explicitly with
-`.claude/scripts/append_log.sh <PHASE> <target> <SUCCESS|GATED>`. Prefer Write-tool output paths so
-the hook does this for you.
+`.claude/scripts/append_log.sh <PHASE> <target> <SUCCESS|GATED>` — call this LAST, after every other
+file change for that Work Block (archiving a source, updating `INDEX.md`), so the one automatic
+commit it triggers captures the whole block together. Prefer Write-tool output paths so the hook
+does this for you without the ordering caveat.
+
+**If a Work Block isn't committed:** `append_log.sh` warns loudly rather than failing silently —
+either the engagement has no `.git` yet (run `/bootstrap`, which will initialize one) or nothing
+was staged. The ledger line itself is still authoritative either way; see
+`operations/guides/02_MAINTENANCE.md`.
 
 ## 4. Registration
 

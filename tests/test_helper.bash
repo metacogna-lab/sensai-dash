@@ -20,6 +20,19 @@ setup_sandbox() {
     echo "$ENG" > "$CLAUDE_PROJECT_DIR/operations/.active_engagement"
     echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" > "$ENG_DIR/telemetry/execution.log"
     printf '# engagement index\n' > "$ENG_DIR/INDEX.md"
+    init_engagement_repo "$ENG_DIR"
+}
+
+# Each engagement is its own git repo (see .claude/skills/init-engagement/SKILL.md);
+# append_log.sh auto-commits into it. Give the sandbox engagement a real repo with a
+# local git identity so tests don't depend on (or pollute) the developer's global config.
+init_engagement_repo() {
+    local dir="$1"
+    git -C "$dir" init -q
+    git -C "$dir" config user.email "bats@example.com"
+    git -C "$dir" config user.name "bats"
+    git -C "$dir" add -A
+    git -C "$dir" commit -q -m "[INIT] test fixture" --allow-empty
 }
 
 teardown_sandbox() {

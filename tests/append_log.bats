@@ -42,3 +42,28 @@ teardown() { teardown_sandbox; }
     run head -1 "$ENG_DIR/telemetry/execution.log"
     [[ "$output" == "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" ]]
 }
+
+@test "append_log.sh: commits the Work Block into the engagement's own repo" {
+    BEFORE=$(git -C "$ENG_DIR" log --oneline | wc -l | tr -d ' ')
+    "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$ENG" >/dev/null
+    AFTER=$(git -C "$ENG_DIR" log --oneline | wc -l | tr -d ' ')
+    [ "$AFTER" -eq "$((BEFORE + 1))" ]
+    run git -C "$ENG_DIR" log -1 --format=%s
+    [[ "$output" == "[CONSUME] WB-001: node--a.md (SUCCESS)" ]]
+}
+
+@test "append_log.sh: GATED status is also committed (the ledger itself is the audit trail)" {
+    "$SCRIPTS/append_log.sh" CONSUME "node--bad.md" GATED "$ENG" >/dev/null
+    run git -C "$ENG_DIR" log -1 --format=%s
+    [[ "$output" == "[CONSUME] WB-001: node--bad.md (GATED)" ]]
+}
+
+@test "append_log.sh: warns but still succeeds when the engagement has no git repo yet" {
+    NOGIT_ENG="nogit_eng"
+    NOGIT_DIR="$CLAUDE_PROJECT_DIR/operations/engagements/$NOGIT_ENG"
+    mkdir -p "$NOGIT_DIR/telemetry"
+    run "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$NOGIT_ENG"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"WB-001"* ]]
+    [[ "$output" == *"no git repo yet"* ]]
+}

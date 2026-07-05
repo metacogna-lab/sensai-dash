@@ -32,7 +32,6 @@ one-line summary (N consumed) and recommend `/index`.
 6. Once the write succeeds, move the raw file to `<eng>/research_body/03_archive/` so it is never
    reprocessed.
 7. Update `<eng>/INDEX.md`: add the node under the corpus section with its TL;DR.
-8. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[CONSUME] WB-<id>: <one-line summary of what was extracted>"`.
+8. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.
 
 After a batch of consumes, recommend `/index` to the operator so the corpus map catches up.

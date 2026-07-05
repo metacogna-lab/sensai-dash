@@ -25,5 +25,4 @@ This is the ANALYZE phase. Argument: one or more node filenames in `<eng>/resear
    gated and logged as `QUARANTINE` automatically.)
 7. Update `<eng>/INDEX.md`: the theory with its TL;DR and per-question coverage, plus any new
    quarantine entries in the review queue section.
-8. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[ANALYZE] WB-<id>: <one-line summary of the synthesized theory>"`.
+8. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

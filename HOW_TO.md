@@ -35,15 +35,20 @@ at exactly the points that need human judgment.
 ## First-time setup
 
 1. Open Claude Code at the repo root and run **`/bootstrap`**. It verifies directories, the
-   hook scripts, templates, the engagement layout, and `pdftotext` (install via
-   `brew install poppler` if missing — without it `/extract` falls back to slower Read-tool
-   transcription).
-2. Make sure git has at least one commit. The ledger, corpus-map history, and every recovery
-   path in this system assume commits exist. (Also check `.gitignore`: if `telemetry/` is
-   ignored, your Work Block ledger will never be committed — decide deliberately.)
+   hook scripts, templates, the engagement layout, `pdftotext` (install via `brew install poppler`
+   if missing — without it `/extract` falls back to slower Read-tool transcription), and that
+   every engagement has its own git repository (see below), initializing one if it doesn't.
+2. Make sure the harness repo (this repo — not an engagement's) has at least one commit; that's
+   this repo's own concern, separate from engagement data.
 3. Check the wiki home: [operations/INDEX.md](operations/INDEX.md) shows the engagement registry and
    which one is active. Each engagement's own `INDEX.md` is its live dashboard — the Run Status
    table's **Blockers column literally tells you what to do next**.
+
+**Every engagement is its own git repository.** `/init-engagement <name>` runs `git init` inside
+`operations/engagements/<name>/` and gives it its own `.gitignore` — separate history from this
+harness repo, and gitignored from it entirely (you'll never see engagement changes in this repo's
+`git status`). Every Work Block commits automatically into the *engagement's* repo, not this one;
+see "Sharp edges" below.
 
 ## First run (see it work, before you bring your own corpus)
 
@@ -103,14 +108,15 @@ Every artifact write is checked by a hook against its schema in `operations/temp
 frontmatter (`type:`, `status:`), non-empty body, and required sections (an economic model
 without `## Monetization Vector` is rejected; a verification without `## Verdict`, a corpus map
 without `## Baseline (As-Is)`, an alignment doc without `## Execution Detail` likewise). On
-rejection the file is deleted, the reason is printed, and a `GATED` line is logged — the skill
-then re-invokes its agent with the reason and rewrites. You'll see this happen; it's the system
-working. Note the gates validate **structure, not truth** — truth-checking is `/stress-test`'s
-job, and yours.
+rejection the file is quarantined (moved to that engagement's own `.rejected/`, never deleted),
+the reason is printed, and a `GATED` line is logged — the skill then re-invokes its agent with the
+reason and rewrites. You'll see this happen; it's the system working. Note the gates validate
+**structure, not truth** — truth-checking is `/stress-test`'s job, and yours. On success, the
+Work Block is committed automatically into the engagement's own repo — see "Sharp edges" below.
 
 The hook also enforces **engagement isolation**: a pipeline write aimed at any engagement other
-than the active one is deleted and blocked ("context bleed"). If that surprises you, you probably
-forgot to `/switch`.
+than the active one is quarantined and blocked ("context bleed"). If that surprises you, you
+probably forgot to `/switch`.
 
 ## When the pipeline stops for you (by design)
 
@@ -128,27 +134,34 @@ more corpus.
 
 One engagement per distinct domain/client — never mix. `/switch <name>` changes the active
 pointer and primes context from that engagement's INDEX.md; all state (goals, corpus, outcomes,
-ledger) is per-engagement. System logic (skills, agents, hooks, templates) is shared. Don't run
-two Claude Code sessions against the same checkout with different engagements active — the
-pointer is global per checkout.
+ledger) is per-engagement, in its own git repository with its own commit history. System logic
+(skills, agents, hooks, templates) is shared. Don't run two Claude Code sessions against the same
+checkout with different engagements active — the pointer is global per checkout. Because each
+engagement is its own repo, it's also independently portable: `operations/engagements/<name>/` can
+be copied, backed up, or (later) pushed to its own remote without touching any other engagement or
+the harness itself.
 
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
 | "No active engagement" | pointer file missing | `/switch <name>` or `/init-engagement <name>` |
-| "Context bleed blocked ... quarantined" | write aimed at non-active engagement | `/switch <that-engagement>`; recover the file from `operations/.rejected/` if needed |
+| "Context bleed blocked ... quarantined" | write aimed at non-active engagement | `/switch <that-engagement>`; recover the file from that engagement's own `.rejected/` if needed |
 | "Gate failed ... quarantined" | artifact missing schema field/section | read the reason; compare `operations/templates/<type>.md`; re-run the phase (see `operations/guides/02_MAINTENANCE.md`) |
 | `/analyze` refuses to run | no `research_questions.md` | run `/question` first — this is deliberate |
 | `/extract` produced garbage | scanned/image PDF | the skill falls back to Read-tool transcription; or OCR the PDF externally first |
-| Ledger looks wrong/missing | `telemetry/` gitignored, or file hand-edited | ledger is hook-written only; restore from git if committed |
+| Ledger looks wrong/missing | file hand-edited outside the pipeline | ledger is `append_log.sh`-written only; `git -C operations/engagements/<name> log` to see committed history |
+| "no git repo yet" warning | engagement predates repo-per-engagement | run `/bootstrap`, which initializes one |
 
 ## Sharp edges (know before a long run)
 
-- **Commit discipline.** Work Blocks want one commit each. Decide your consent policy up front —
-  don't leave it ambiguous whether the pipeline may commit `[PHASE] WB-*` automatically.
+- **Commit discipline is automatic per engagement, manual for the harness.** Every Work Block
+  commits itself into the active engagement's own repo (`append_log.sh` does `git add -A && git
+  commit` there) — you don't decide this per-run, it's designed in. The harness repo (this repo's
+  own `.claude/`/`operations/` system files) is the opposite: commits there still need your
+  explicit go-ahead, same as any dev repo. Don't confuse the two when you see a git prompt.
 - **Rejected artifacts are quarantined, not deleted.** A gate or bleed rejection moves the file to
-  `operations/.rejected/<file>.<timestamp>` — recoverable, not gone. See
+  the OWNING engagement's own `.rejected/<file>.<timestamp>` — recoverable, not gone. See
   `operations/guides/02_MAINTENANCE.md` for the recovery steps.
 - **Hand-editing artifacts** outside Claude Code bypasses the gates *and* the ledger/INDEX
   bookkeeping. The sanctioned way to do this is documented in

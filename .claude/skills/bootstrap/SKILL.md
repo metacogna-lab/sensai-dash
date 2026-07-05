@@ -23,26 +23,37 @@ Run this before any other Sensai Compilar command in a fresh checkout.
 5. **Hook self-test (the enforcement layer must be verified live, not assumed):** write a
    deliberately invalid Markdown file (missing required frontmatter) to
    `operations/engagements/<active>/research_body/02_nodes/__bootstrap_selftest__.md` using the
-   Write tool. Confirm the PostToolUse hook blocks it and the file lands in
-   `operations/.rejected/` (not silently accepted, not deleted). Clean up any leftover
-   `.rejected/` copy afterward. If the write is NOT blocked, the gate is failing open — this is a
-   CRITICAL result, stop and report it before doing anything else; do not proceed to run any
-   pipeline phase until this is fixed (see `operations/guides/02_MAINTENANCE.md`).
-6. Verify this is a git repository (`git rev-parse --is-inside-work-tree`). If not, tell the user
-   the Work Block/commit protocol requires git, and ask before running `git init`.
+   Write tool. Confirm the PostToolUse hook blocks it and the file lands in that engagement's own
+   `.rejected/` (not silently accepted, not deleted). Clean up any leftover `.rejected/` copy
+   afterward. If the write is NOT blocked, the gate is failing open — this is a CRITICAL result,
+   stop and report it before doing anything else; do not proceed to run any pipeline phase until
+   this is fixed (see `operations/guides/02_MAINTENANCE.md`).
+6. Verify this repo (the harness) is a git repository (`git rev-parse --is-inside-work-tree`). If
+   not, tell the user the harness's own commit protocol requires git, and ask before running
+   `git init`. This is the harness/dev repo — a separate trust boundary from each engagement's own
+   repo, checked in step 8 below.
 
 **Engagement layer (multi-tenant):**
 7. Verify `operations/.active_engagement` exists and names a directory under `operations/engagements/`.
    If the pointer is missing but engagements exist, ask which to activate (`/switch`). If no
    engagements exist at all, recommend `/init-engagement <name>`.
-8. For EACH engagement under `operations/engagements/`, verify its isolated tree:
+8. For EACH engagement under `operations/engagements/`, verify its isolated tree AND that it is its
+   own standalone git repository (`git -C operations/engagements/<name> rev-parse
+   --is-inside-work-tree`):
    `goals/`, `goals/audits/`,
    `research_body/{00_inbox,01_raw,02_nodes,03_archive,04_quarantine}`,
    `outcomes/{01_theories,02_economic_models,03_verification,04_alignment,05_broadcast,longitudinal}`,
    `telemetry/execution.log` (with the header row `TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS`),
-   and `INDEX.md`. Create anything missing.
+   `.gitignore` (must contain `.rejected/`), and `INDEX.md`. Create anything missing — including
+   `git -C operations/engagements/<name> init -q` if an engagement predates this feature and has no
+   `.git` yet (this is a real, expected case for engagements created before repo-per-engagement
+   shipped; give it an initial commit of its current state once initialized).
 9. Verify the global wiki home `operations/INDEX.md` exists and its Engagement Registry lists every
    directory in `operations/engagements/` with the active one marked.
+10. Verify the harness's own `.gitignore` excludes `operations/engagements/*` (each engagement's
+    repo must be invisible to the harness repo's own tracking — see
+    `operations/guides/02_MAINTENANCE.md`).
 
 Report a short pass/fail summary per layer. Do not commit — bootstrap isn't a phase and logs
-nothing.
+nothing. (This applies to the harness repo; per-engagement commits, if step 8 initialized a new
+repo for a pre-existing engagement, are the one exception — that initial commit is expected.)

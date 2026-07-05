@@ -20,9 +20,9 @@ CLAUDE.md                 ← you are here (harness manual)
 │                         #   strategist(fable) consumer(haiku) indexer(sonnet) analyst(sonnet)
 │                         #   evaluator(opus) verifier(opus) synthesist(fable) broadcaster(haiku)
 │                         #   historian(sonnet) auditor(sonnet)
-├── skills/               # 14 skills = the /commands: bootstrap switch init-engagement question
-│                         #   extract consume index analyze evaluate stress-test synthesize
-│                         #   broadcast longitudinal daily-summary
+├── skills/               # 16 skills = the /commands: bootstrap switch init-engagement question
+│                         #   extract consume index analyze evaluate stress-test verify synthesize
+│                         #   broadcast longitudinal daily-summary audit
 ├── scripts/              # hook implementations: post_write_gate.sh gate.sh append_log.sh
 │                         #   check_committed.sh
 └── settings.json         # wires PostToolUse(Write|Edit) gate + Stop reminder
@@ -30,10 +30,14 @@ operations/                  # THE WIKI + engagement-workspace pipeline state (s
 ├── INDEX.md              # GLOBAL wiki home: engagement registry, active marker
 ├── README.md             # architecture + "how to leverage the platform" + I/O contract table
 ├── SKILL.md              # standard for adding new phases (4 registration points)
+├── guides/               # editing/maintenance/output-quality/prompt-tuning guides
 ├── templates/            # Progressive Disclosure schemas (global system logic)
 ├── .active_engagement    # pointer: which tenant the pipeline operates on
-└── engagements/          # ISOLATED tenant state — one folder per engagement
-    └── compilar/         # (default engagement; more via /init-engagement)
+└── engagements/          # ISOLATED tenant state — gitignored from THIS repo; see below
+    ├── README.md         # (the one tracked file here — explains why the rest is invisible)
+    └── compilar/         # (default engagement; more via /init-engagement) — its OWN git repo
+        ├── .git/         # standalone repository — separate history from the harness repo
+        ├── .gitignore    # ignores .rejected/ (quarantine scratch, not a Work Block product)
         ├── INDEX.md      # engagement wiki home: run status, artifact index
         ├── goals/        # primary_directive, active_milestones, research_questions, audits/
         ├── research_body/# 00_inbox → 01_raw → 02_nodes → 03_archive; 04_quarantine (HITL
@@ -46,6 +50,15 @@ agents/                   # (repo root) ACTIVE design inputs: PRD, Hooks spec, t
 └── archive/              # consumed/processed design drafts (historical record)
 ```
 
+**Two git repos, two trust boundaries.** This repo (the harness — `.claude/`, `operations/`
+system files, `agents/`, `tests/`) requires operator consent to commit, same as any dev repo. Each
+engagement under `operations/engagements/<name>/` is a **separate, standalone repository** that
+the harness commits to automatically, once per Work Block — that automation is infrastructure the
+operator explicitly asked for, distinct from a session committing the operator's own working repo
+without asking. Never confuse the two: don't `cd` into an engagement expecting harness-repo state,
+and don't expect the harness repo's `git log` to show engagement activity — it's gitignored by
+design (`operations/engagements/*` in the root `.gitignore`).
+
 ## Operating protocol
 
 - **Multi-tenancy (PRD v1.00):** every pipeline command operates on exactly one engagement — the
@@ -54,10 +67,12 @@ agents/                   # (repo root) ACTIVE design inputs: PRD, Hooks spec, t
   targets a different engagement (context bleed) or has a malformed engagement segment (path
   traversal). Skills resolve `<eng> = operations/engagements/$(cat operations/.active_engagement)` first.
 - **Work Blocks:** one skill invocation = one logged ledger line (in the active engagement's
-  `telemetry/execution.log`) = one commit `[PHASE] WB-<id>: <summary>`. Valid phases: INIT,
-  QUESTION, EXTRACT, CONSUME, INDEX, ANALYZE, QUARANTINE, EVALUATE, VERIFY, SYNTHESIZE, BROADCAST,
-  LONGITUDINAL, AUDIT. A hook block is the `[FAIL]` signal from the PRD's stdout protocol: do NOT
-  commit, read the reason, self-correct, retry.
+  `telemetry/execution.log`) = one commit `[PHASE] WB-<id>: <target> (<status>)`, made
+  automatically by `append_log.sh` inside that engagement's own repo — regular by construction,
+  not by a skill remembering to run `git commit`. Valid phases: INIT, QUESTION, EXTRACT, CONSUME,
+  INDEX, ANALYZE, QUARANTINE, EVALUATE, VERIFY, SYNTHESIZE, BROADCAST, LONGITUDINAL, AUDIT. A hook
+  block is the `[FAIL]` signal from the PRD's stdout protocol: do NOT commit, read the reason,
+  self-correct, retry (capped at two attempts — see `operations/SKILL.md`).
 - **Gating is enforced by hooks, not memory.** The `PostToolUse` hook validates every Write/Edit
   landing in a gated directory against its template (frontmatter `type:`/`status:`, required
   sections like `## Monetization Vector`, `## Verdict`, `## Baseline (As-Is)`, `## Execution
@@ -69,9 +84,10 @@ agents/                   # (repo root) ACTIVE design inputs: PRD, Hooks spec, t
   `[[wikilinks]]`. Every skill updates `INDEX.md` inside its Work Block.
 - **Human-in-the-loop points:** `research_body/04_quarantine/` (contradictions the analyst refuses
   to resolve) and FAIL verdicts from `/stress-test`. The pipeline stops and waits there by design.
-- **Commits require operator consent** (global git-workflow rules). The Stop hook *reminds* about
-  uncommitted Work Blocks; it must never be made blocking, or it deadlocks against the
-  consent rule.
+- **Harness commits require operator consent** (global git-workflow rules) — this repo, not an
+  engagement's. **Engagement commits are automatic** by design (see above); the Stop hook still
+  only *reminds*, never blocks, for both — dirty engagement state after a Work Block usually means
+  an un-logged hand-edit, not a policy question.
 - New phases follow `operations/SKILL.md`: agent + skill + gate arm/template + README/INDEX rows.
 
 ## The `agents/` folder (repo root)

@@ -26,5 +26,4 @@ This is the VERIFY phase (Fable Interaction V.C). Argument: an artifact filename
      yourself; the operator decides.
    - **PASS / PASS-WITH-NOTES** — record it and move on.
 6. Update `<eng>/INDEX.md` (verification listed next to its artifact, with verdict).
-7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[VERIFY] WB-<id>: <artifact> → <verdict>"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

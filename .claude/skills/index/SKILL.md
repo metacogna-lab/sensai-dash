@@ -17,5 +17,4 @@ No argument — it always operates on the full node set.
    `## Baseline (As-Is)` section, and appends the `INDEX` log line automatically.)
 5. If the hook blocks the write, read the reason, re-invoke the indexer with that feedback, rewrite.
 6. Update `<eng>/INDEX.md`: corpus map timestamp and the baseline TL;DR.
-7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[INDEX] WB-<id>: corpus map over <n> nodes"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

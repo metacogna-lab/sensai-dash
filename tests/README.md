@@ -1,7 +1,8 @@
 # Hook-Layer Regression Suite
 
-26 bats cases covering `.claude/scripts/gate.sh`, `append_log.sh`, and `post_write_gate.sh` — the
-enforcement layer this harness's entire "deterministic gating" claim rests on. See
+31 bats cases covering `.claude/scripts/gate.sh`, `append_log.sh`, and `post_write_gate.sh` — the
+enforcement layer this harness's entire "deterministic gating" claim rests on, including the
+per-engagement auto-commit behavior. See
 [operations/guides/02_MAINTENANCE.md](../operations/guides/02_MAINTENANCE.md) for when to run
 this suite and how it relates to the manual smoke-test recipe.
 
@@ -14,10 +15,13 @@ bats tests/
 
 ## What's tested vs. what isn't
 
-Tested: every `gate.sh` required-section/frontmatter check, `append_log.sh`'s WB-ID minting and
-pointer resolution, and `post_write_gate.sh`'s full decision tree — valid/invalid writes,
-no-op paths, context bleed, missing pointer, fail-closed behavior on unparseable payloads and a
-missing `python3`, and ledger-append-failure reporting.
+Tested: every `gate.sh` required-section/frontmatter check, `append_log.sh`'s WB-ID minting,
+pointer resolution, and per-engagement auto-commit (including the GATED case and the
+no-git-repo-yet warning path), and `post_write_gate.sh`'s full decision tree — valid/invalid
+writes, no-op paths, context bleed (rejected into the *targeted* engagement's own `.rejected/`),
+missing pointer, fail-closed behavior on unparseable payloads and a missing `python3`,
+ledger-append-failure reporting, and that a successful Work Block lands a commit in the
+engagement's own repo (never the harness repo).
 
 **Not tested here:** the `/init-engagement` step-ordering fix (eng finding F4) — bats can't drive
 Claude Code's Skill/Agent tool, so that regression is guarded at the mechanism level only (the

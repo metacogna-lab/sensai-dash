@@ -11,9 +11,15 @@
 #     becomes a no-op — fail-OPEN, the exact failure class this hook exists to prevent.
 #     Canonicalizing ENG_ROOT/POINTER/REJECT_DIR here keeps both sides of every comparison
 #     on the same footing.
-#   - rejected files are QUARANTINED to operations/.rejected/ (recoverable), never rm'd
+#   - rejected files are QUARANTINED, never rm'd — to the OWNING engagement's own
+#     .rejected/ (operations/engagements/<eng>/.rejected/) so its full audit trail,
+#     failures included, stays inside that engagement's own repo. A shared fallback at
+#     operations/.rejected/ (in the harness repo) exists only for the malformed-segment
+#     case, where the engagement name itself isn't trustworthy enough to build a path from.
 #   - gate reason captured via mktemp, not a fixed /tmp path
-# On pass: appends the Work Block ledger line to the owning engagement's execution.log.
+# On pass: appends the Work Block ledger line and commits it, inside the owning
+# engagement's OWN git repo (see append_log.sh — both this hook and /extract's Bash path
+# converge there, so the commit logic lives in one place).
 
 set -uo pipefail
 
@@ -22,7 +28,7 @@ PROJECT_DIR="$(cd "$PROJECT_DIR" 2>/dev/null && pwd -P || echo "$PROJECT_DIR")"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POINTER="$PROJECT_DIR/operations/.active_engagement"
 ENG_ROOT="$PROJECT_DIR/operations/engagements"
-REJECT_DIR="$PROJECT_DIR/operations/.rejected"
+FALLBACK_REJECT_DIR="$PROJECT_DIR/operations/.rejected"
 
 if ! command -v python3 >/dev/null 2>&1; then
     echo "gate hook: python3 not found — enforcement cannot run, blocking the write (fail-closed). Install python3 or fix PATH, then retry." >&2
@@ -59,18 +65,37 @@ case "$FILE_PATH" in
 esac
 
 # Quarantine, never delete (F2): rejected files stay recoverable.
+# Once ENGAGEMENT is known and validated (clean of ".."), reject into ITS OWN .rejected/.
 reject_file() {
-    mkdir -p "$REJECT_DIR"
-    REJECTED_AS="$REJECT_DIR/$(basename "$FILE_PATH").$(date +%s)"
+    local dir="$ENG_ROOT/$ENGAGEMENT/.rejected"
+    mkdir -p "$dir"
+    REJECTED_AS="$dir/$(basename "$FILE_PATH").$(date +%s)"
+    mv -f "$FILE_PATH" "$REJECTED_AS" 2>/dev/null || REJECTED_AS="(move failed — file left in place)"
+}
+
+# Before ENGAGEMENT is validated, a malformed segment could itself contain traversal —
+# never build a path out of it. Use the shared harness-level fallback instead.
+reject_file_fallback() {
+    mkdir -p "$FALLBACK_REJECT_DIR"
+    REJECTED_AS="$FALLBACK_REJECT_DIR/$(basename "$FILE_PATH").$(date +%s)"
     mv -f "$FILE_PATH" "$REJECTED_AS" 2>/dev/null || REJECTED_AS="(move failed — file left in place)"
 }
 
 REL="${FILE_PATH#"$ENG_ROOT"/}"
+
+# A bare file directly under operations/engagements/ (no subdirectory component — e.g.
+# the engagements/README.md placeholder) is not inside any engagement at all. Ungated:
+# it can't bleed into a tenant that was never its target in the first place.
+case "$REL" in
+    */*) : ;;
+    *) exit 0 ;;
+esac
+
 ENGAGEMENT="${REL%%/*}"
 # realpath above already collapsed ../ segments (F6); this is belt-and-braces.
 case "$REL" in
     *..*|"")
-        reject_file
+        reject_file_fallback
         echo "Rejected: malformed engagement path ($FILE_PATH). Moved to $REJECTED_AS." >&2
         exit 2
         ;;

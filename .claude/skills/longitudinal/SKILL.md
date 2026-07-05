@@ -20,7 +20,9 @@ This is the LONGITUDINAL phase. Argument: a time window ("7d", "since WB-020", "
    gate hook validates `type: longitudinal` and appends the `LONGITUDINAL` log line.)
 5. If the hook blocks the write, re-invoke the historian with the reason and rewrite.
 6. Update `<eng>/INDEX.md` (latest longitudinal report + its headline finding).
-7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[LONGITUDINAL] WB-<id>: <headline trend finding>"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block
+   automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself.
+   Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your
+   report to the operator.
 8. Surface the funnel numbers and the single most actionable trend to the operator directly in your
    response.

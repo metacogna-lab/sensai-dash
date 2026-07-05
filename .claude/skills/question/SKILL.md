@@ -19,5 +19,4 @@ theory without `<eng>/goals/research_questions.md` present.
 5. If the hook blocks the write (gate failure), read the reason, re-invoke the strategist with that
    feedback, and rewrite.
 6. Update `<eng>/INDEX.md`: the run's TL;DR and the list of active questions.
-7. Read the last line of `<eng>/telemetry/execution.log` for the assigned `WB-ID`, then commit:
-   `git add -A && git commit -m "[QUESTION] WB-<id>: <one-line summary of the calibrated outcome>"`.
+7. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

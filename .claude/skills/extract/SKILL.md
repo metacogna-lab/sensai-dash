@@ -20,10 +20,14 @@ process everything in the inbox).
    - **Already plain text:** just `mv` it to `01_raw/` — no conversion step.
 3. **Gate (manual — this phase writes via Bash, which the Write-hook cannot see):** verify the
    output file in `01_raw/` is non-empty and contains real prose (not extraction junk). If it
-   failed, delete the output, log `GATED`, and tell the operator the source needs manual handling.
-4. **Log (manual, same reason):** this is the one phase where you append the ledger line yourself:
-   `"$CLAUDE_PROJECT_DIR"/.claude/scripts/append_log.sh EXTRACT <output-filename> SUCCESS` (or `GATED`).
-5. Move the source binary to `<eng>/research_body/03_archive/` so it is never re-extracted.
-6. Update the `research_body` section of `<eng>/INDEX.md` (new raw file listed, inbox count).
-7. Commit: `git add -A && git commit -m "[EXTRACT] WB-<id>: <source> → <output>.txt"` (WB-id is
-   echoed by append_log.sh).
+   failed, delete the output and tell the operator the source needs manual handling — then still
+   do step 6 below with `GATED` so the failure is logged.
+4. Move the source binary to `<eng>/research_body/03_archive/` so it is never re-extracted.
+5. Update the `research_body` section of `<eng>/INDEX.md` (new raw file listed, inbox count).
+6. **Log and commit (manual — this phase writes via Bash, which the Write-hook cannot see): this
+   is the one phase where you call `append_log.sh` yourself, and do it LAST**, after steps 3-5, so
+   its auto-commit (inside the engagement's own repo) captures the `01_raw/` output, the archived
+   source, and the `INDEX.md` update together as one Work Block:
+   `"$CLAUDE_PROJECT_DIR"/.claude/scripts/append_log.sh EXTRACT <output-filename> SUCCESS` (or
+   `GATED`). Do not run `git add`/`git commit` yourself — the script already did. Report the
+   echoed `WB-ID` to the operator.

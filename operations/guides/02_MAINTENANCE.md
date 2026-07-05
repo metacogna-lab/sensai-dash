@@ -12,9 +12,14 @@ P1 hardening). Two writes, both via the Write tool so the `PostToolUse` hook act
    with the right `PHASE`.
 2. **Invalid case:** write the same path with a required field/section missing. Confirm: the
    write is blocked (you'll see the `PostToolUse:Write hook blocking error` message), the file is
-   quarantined to `operations/.rejected/` (not deleted), and the ledger shows `GATED`.
+   quarantined to that engagement's own `operations/engagements/<eng>/.rejected/` (not deleted),
+   and the ledger shows `GATED`.
 3. **Clean up:** remove both test artifacts and reset the ledger to its header row before
-   committing — test noise in the ledger corrupts the WB-ID sequence for real work.
+   committing — test noise in the ledger corrupts the WB-ID sequence for real work. Since Work
+   Blocks now auto-commit, also check `git -C operations/engagements/<eng> log` for stray test
+   commits and `git reset --soft`/amend them away before you're done — a smoke test that leaves
+   `[CONSUME] WB-004: __bootstrap_selftest__.md (GATED)` in real history is exactly the noise
+   step 3 exists to prevent.
 
 If you changed engagement-isolation logic specifically, add a third case: write into a
 *different* engagement than the active one and confirm it's quarantined as context bleed, not
@@ -71,18 +76,38 @@ content is correct" — they never did, and the docs should keep saying so.
 
 ## `.rejected/` recovery
 
-Since the P1 hardening, a gate/bleed rejection moves the file to
-`operations/.rejected/<filename>.<unix-timestamp>` instead of deleting it. To recover:
+Since the P1 hardening, a gate/bleed rejection moves the file to that engagement's own
+`operations/engagements/<eng>/.rejected/<filename>.<unix-timestamp>` instead of deleting it (the
+one exception — a malformed engagement-name segment — falls back to the shared
+`operations/.rejected/` in the harness repo, since the name isn't trustworthy enough to build a
+per-engagement path from). To recover:
 
 1. Inspect the file — read the rejection reason from the chat/hook output (it names the specific
    missing field or section).
 2. Fix it in place, or copy the content into a fresh Write through the correct skill (preferred —
-   this re-exercises the gate and gets you a proper ledger line).
-3. Delete the `.rejected/` copy once recovered; it's gitignored scratch space, not the record of
-   truth.
+   this re-exercises the gate and gets you a proper ledger line, and thus a proper commit).
+3. Delete the `.rejected/` copy once recovered; it's listed in the engagement's own `.gitignore`
+   (added by `/init-engagement`), not the record of truth.
 
 If `.rejected/` is accumulating files faster than they're being resolved, that's the same signal
 as a growing quarantine queue: the run needs your attention, not more corpus.
+
+## Two repos, one harness
+
+Every command in this harness operates on exactly one of two trust boundaries:
+
+- **The harness repo** (this repo) — `.claude/`, `operations/` system files, `agents/`, `tests/`.
+  Commits here require operator consent, same as any dev repo; the Stop hook only reminds.
+- **The active engagement's own repo** — `operations/engagements/<name>/`, created by
+  `/init-engagement` and gitignored from the harness repo. Every Work Block commits here
+  *automatically*, via `append_log.sh`. This is the harness's own designed automation, not a
+  session deciding to commit on the operator's behalf — don't second-guess it by adding consent
+  gates, and don't confuse a reminder about the harness repo with one about an engagement repo (the
+  Stop hook checks both, separately, and says which is which).
+
+If an engagement predates this feature and has no `.git` yet, `/bootstrap` initializes one (with
+an initial commit of its current state) rather than silently leaving it half-migrated — check for
+"has no git repo yet" warnings from `append_log.sh` as the tell.
 
 ## Regression net
 

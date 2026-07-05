@@ -53,14 +53,29 @@ the post-review hardening) user artifacts. Rules, non-negotiable:
   dependency), it must block (`exit 2`) and say why — never `exit 0` silently. This was CEO
   finding E9 / eng finding F5; the current `post_write_gate.sh` fails closed on payload-parse
   errors and a missing `python3`. Keep it that way when you touch this file.
-- **Quarantine, don't delete.** Rejected/bled writes move to `operations/.rejected/` with a
-  timestamp suffix, never `rm -f`. This was eng finding F2 (Edit failures were destroying
-  pre-existing artifacts). If you're tempted to add another `rm -f` on a new failure path, route
-  it through the existing `reject_file()` helper instead.
+- **Quarantine, don't delete.** Rejected/bled writes move to the OWNING engagement's own
+  `.rejected/` (`operations/engagements/<eng>/.rejected/`, gitignored inside that engagement's own
+  repo) with a timestamp suffix, never `rm -f`. This was eng finding F2 (Edit failures were
+  destroying pre-existing artifacts). If you're tempted to add another `rm -f` on a new failure
+  path, route it through the existing `reject_file()` helper instead. The one exception is the
+  malformed-engagement-segment case, which uses the harness-level `reject_file_fallback()` (a
+  shared `operations/.rejected/`) because the engagement name itself isn't trustworthy enough yet
+  to build a path from.
 - **Anchor and canonicalize paths before acting on them.** `post_write_gate.sh` resolves the
-  incoming path with `os.path.realpath` and only acts on paths under this repo's
+  incoming path with `os.path.realpath`, canonicalizes `PROJECT_DIR` itself the same way
+  (`pwd -P` — a symlinked ancestor otherwise defeats the prefix match silently, fail-open; the
+  bats suite caught this once), and only acts on paths under this repo's
   `operations/engagements/` root — this was eng finding F1 (an unanchored path could match and
-  quarantine files in an unrelated checkout). Any new path-matching logic must do the same.
+  quarantine files in an unrelated checkout). Any new path-matching logic must do the same. Also
+  remember a bare file directly under `operations/engagements/` (no engagement subdirectory — e.g.
+  the tracked `README.md` there) is not inside any engagement; it must be a no-op, not treated as
+  a bleed into an engagement named after the filename.
+- **Every Work Block commit happens inside the engagement's OWN repo, automatically.**
+  `append_log.sh` runs `git -C <engagement-dir> add -A && git commit` right after appending the
+  ledger line — this is what makes commits "regular" without any skill remembering to run one.
+  Never add a `git commit` call to a skill file, and never point a hook's commit logic at the
+  harness repo (`$PROJECT_DIR`) instead of the engagement directory — that would silently commit
+  research data into the wrong repository.
 - **One reason file per invocation, via `mktemp`.** Never write hook scratch state to a fixed
   `/tmp` path — a fixed path is both a symlink-attack surface and a cross-session data race (eng
   finding F9).

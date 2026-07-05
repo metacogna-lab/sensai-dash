@@ -17,7 +17,9 @@ This is the AUDIT phase (`/daily-summary`). It judges *today's process*; for tre
    `<eng>/goals/audits/summary_<YYYY-MM-DD>.md` using the Write tool. (The gate hook validates the
    frontmatter and appends the `AUDIT` log line automatically.)
 5. Update `<eng>/INDEX.md`: latest audit verdict in the status section.
-6. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[AUDIT] WB-<id>: <one-line verdict — on-track or drifting>"`.
+6. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block
+   automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself.
+   Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your
+   report to the operator.
 7. Surface the audit's 3 hard questions to the operator directly in your response — don't make them
    open the file to see them.

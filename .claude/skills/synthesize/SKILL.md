@@ -23,5 +23,4 @@ run's verified output set; optionally the operator names which theories/models t
 6. Recommend (don't auto-run) `/stress-test` on the new alignment document — the deliverable itself
    gets the self-audit before it ships via `/broadcast`.
 7. Update `<eng>/INDEX.md` (alignment doc is the run's headline artifact — link it at the top).
-8. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
-   `git add -A && git commit -m "[SYNTHESIZE] WB-<id>: alignment doc for <outcome-slug>"`.
+8. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

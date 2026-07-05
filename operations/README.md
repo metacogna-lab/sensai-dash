@@ -20,12 +20,18 @@ The harness provides isolated engagement workspaces (PRD v1.00's "multi-tenancy"
 home) is isolated per tenant under `operations/engagements/<name>/`. Exactly one engagement is active
 at a time, named by the `operations/.active_engagement` pointer:
 
-- `/init-engagement <name>` — scaffold a new isolated engagement and switch to it.
+- `/init-engagement <name>` — scaffold a new isolated engagement, give it its **own standalone git
+  repository** (`git -C operations/engagements/<name> init`), and switch to it. This repo has
+  separate history from the harness repo, is gitignored from it (`operations/engagements/*` in the
+  root `.gitignore`), and is where all of that engagement's Work Block commits land.
 - `/switch <name>` — change the active engagement (primes context from its `INDEX.md`).
 - **Context-bleed enforcement is mechanical, not honor-system:** the gate hook derives the owning
-  engagement from every gated write path and quarantines (to `.rejected/`) + blocks any write that
-  targets a non-active engagement, and the engagement segment is sanitized against path
-  traversal (`..`).
+  engagement from every gated write path and quarantines (to that engagement's own `.rejected/`) +
+  blocks any write that targets a non-active engagement, and the engagement segment is sanitized
+  against path traversal (`..`).
+- **Every Work Block is committed automatically, into the owning engagement's own repo** — not the
+  harness repo, and not by a skill remembering to run `git commit`. See "Logging & Work Blocks"
+  below.
 
 All pipeline commands below operate on the active engagement; `<eng>` means
 `operations/engagements/$(cat operations/.active_engagement)`.
@@ -78,8 +84,9 @@ All pipeline commands below operate on the active engagement; `<eng>` means
 
 - Don't skip `/question`. Analysis against a vague goal is the failure mode this system exists to
   prevent (the analyst literally refuses).
-- Trust the gates. If a write gets rejected and deleted, the output was malformed — re-run the
-  phase; never hand-edit an artifact into passing shape.
+- Trust the gates. If a write gets rejected and quarantined, the output was malformed — re-run the
+  phase; never hand-edit an artifact into passing shape (there's a sanctioned override for the rare
+  legitimate case — see `operations/guides/01_EDITING.md`).
 - Watch `INDEX.md`, not the directories. Skills keep it current; it is the system's working memory.
 - The quarantine queue and FAIL verdicts are the only two places the pipeline *stops and waits for
   you* — service them promptly and the rest runs autonomously.
@@ -110,9 +117,13 @@ API keys, no router scripts.
 ## Logging & Work Blocks
 
 Every gated write appends one dense line to `<eng>/telemetry/execution.log`
-(`TIMESTAMP | PHASE | WB-ID | TARGET | STATUS` where STATUS ∈ SUCCESS/GATED/FAIL), written by the
-hook — never by hand (sole exception: `/extract`, whose Bash-created files the Write hook can't
-see). One skill invocation = one Work Block = one git commit `[PHASE] WB-<id>: <summary>`.
+(`TIMESTAMP | PHASE | WB-ID | TARGET | STATUS` where STATUS ∈ SUCCESS/GATED/FAIL/GATED-OVERRIDE),
+written by `.claude/scripts/append_log.sh` — never by hand. The Write-tool hook and `/extract`'s
+Bash path both call this same script, which is also where the commit happens: **one skill
+invocation = one Work Block = one automatic commit `[PHASE] WB-<id>: <target> (<status>)`, made
+inside the owning engagement's own repository.** Regular by construction — no skill needs to
+remember a `git commit` step, and none do; see `operations/guides/02_MAINTENANCE.md` if a commit
+ever seems to be missing (append_log.sh warns loudly rather than failing silently).
 
 See [SKILL.md](SKILL.md) for the standard any new phase must follow, [guides/00_INDEX.md](guides/00_INDEX.md)
 for how to edit, maintain, and get strong outputs from this harness, and the root `CLAUDE.md` for

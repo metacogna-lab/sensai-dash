@@ -19,6 +19,22 @@ teardown() { teardown_sandbox; }
     [[ "$output" == *"CONSUME | WB-001 | node--a.md | SUCCESS" ]]
 }
 
+@test "post_write_gate: a successful Work Block is committed into the engagement's OWN repo" {
+    BEFORE_COUNT=$(git -C "$ENG_DIR" log --oneline | wc -l | tr -d ' ')
+    TARGET="$ENG_DIR/research_body/02_nodes/node--commit-test.md"
+    write_valid_node "$TARGET"
+    PAYLOAD=$(hook_payload "$TARGET")
+    run bash -c "echo '$PAYLOAD' | '$SCRIPTS/post_write_gate.sh'"
+    [ "$status" -eq 0 ]
+    AFTER_COUNT=$(git -C "$ENG_DIR" log --oneline | wc -l | tr -d ' ')
+    [ "$AFTER_COUNT" -eq "$((BEFORE_COUNT + 1))" ]
+    run git -C "$ENG_DIR" log -1 --format=%s
+    [[ "$output" == *"[CONSUME] WB-001: node--commit-test.md (SUCCESS)"* ]]
+    # The commit is in the engagement's OWN repo, not the (nonexistent, in this sandbox)
+    # harness repo — proves the auto-commit is scoped correctly.
+    [ ! -d "$CLAUDE_PROJECT_DIR/.git" ]
+}
+
 @test "post_write_gate: invalid node write is blocked and quarantined, logs GATED" {
     TARGET="$ENG_DIR/research_body/02_nodes/node--bad.md"
     cat > "$TARGET" << 'EOF'  # missing status
@@ -31,9 +47,25 @@ EOF
     run bash -c "echo '$PAYLOAD' | '$SCRIPTS/post_write_gate.sh'"
     [ "$status" -eq 2 ]
     [ ! -f "$TARGET" ]
-    ls "$CLAUDE_PROJECT_DIR/operations/.rejected/" | grep -q "node--bad.md"
+    ls "$ENG_DIR/.rejected/" | grep -q "node--bad.md"
     run tail -1 "$ENG_DIR/telemetry/execution.log"
     [[ "$output" == *"CONSUME | WB-001 | node--bad.md | GATED" ]]
+}
+
+@test "post_write_gate: a bare file directly under engagements/ (no subdirectory) is a no-op" {
+    # Regression case: operations/engagements/README.md is a real file this harness ships.
+    # Its path has no subdirectory component after ENG_ROOT, so REL has no "/" and
+    # ENGAGEMENT would otherwise become "README.md" — treated as an unknown engagement
+    # name and rejected as context bleed. Caught live shipping this exact file.
+    TARGET="$CLAUDE_PROJECT_DIR/operations/engagements/README.md"
+    echo "# Engagements" > "$TARGET"
+    PAYLOAD=$(hook_payload "$TARGET")
+    LOG_BEFORE=$(cat "$ENG_DIR/telemetry/execution.log")
+    run bash -c "echo '$PAYLOAD' | '$SCRIPTS/post_write_gate.sh'"
+    [ "$status" -eq 0 ]
+    [ -f "$TARGET" ]
+    LOG_AFTER=$(cat "$ENG_DIR/telemetry/execution.log")
+    [ "$LOG_BEFORE" = "$LOG_AFTER" ]
 }
 
 @test "post_write_gate: write outside the engagements root is a no-op" {
@@ -75,7 +107,9 @@ EOF
     [ "$status" -eq 2 ]
     [[ "$output" == *"Context bleed blocked"* ]]
     [ ! -f "$TARGET" ]
-    ls "$CLAUDE_PROJECT_DIR/operations/.rejected/" | grep -q "node--bleed.md"
+    # Rejected into the TARGETED engagement's own .rejected/, not testeng's — each
+    # engagement's audit trail (failures included) stays inside its own repo/tree.
+    ls "$CLAUDE_PROJECT_DIR/operations/engagements/other_eng/.rejected/" | grep -q "node--bleed.md"
 }
 
 @test "post_write_gate: missing active-engagement pointer quarantines the write" {
@@ -87,6 +121,7 @@ EOF
     [ "$status" -eq 2 ]
     [[ "$output" == *"no active engagement pointer"* ]]
     [ ! -f "$TARGET" ]
+    ls "$ENG_DIR/.rejected/" | grep -q "node--nopointer.md"
 }
 
 @test "post_write_gate: unparseable JSON payload fails CLOSED (blocks), not open" {
