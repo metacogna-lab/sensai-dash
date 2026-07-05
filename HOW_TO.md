@@ -118,20 +118,23 @@ pointer is global per checkout.
 | Symptom | Cause | Fix |
 |---|---|---|
 | "No active engagement" | pointer file missing | `/switch <name>` or `/init-engagement <name>` |
-| "Context bleed blocked ... File deleted" | write aimed at non-active engagement | `/switch <that-engagement>` and re-run the phase |
-| "Gate failed ... file deleted" | artifact missing schema field/section | read the reason; compare `operations/templates/<type>.md`; re-run the phase |
+| "Context bleed blocked ... quarantined" | write aimed at non-active engagement | `/switch <that-engagement>`; recover the file from `operations/.rejected/` if needed |
+| "Gate failed ... quarantined" | artifact missing schema field/section | read the reason; compare `operations/templates/<type>.md`; re-run the phase (see `operations/guides/02_MAINTENANCE.md`) |
 | `/analyze` refuses to run | no `research_questions.md` | run `/question` first — this is deliberate |
 | `/extract` produced garbage | scanned/image PDF | the skill falls back to Read-tool transcription; or OCR the PDF externally first |
 | Ledger looks wrong/missing | `telemetry/` gitignored, or file hand-edited | ledger is hook-written only; restore from git if committed |
 
 ## Sharp edges (know before a long run)
 
-- **Commit discipline is yours.** Work Blocks want one commit each, but commits require your
-  consent — decide a standing policy up front or expect prompts. Until the repo has commits,
-  a deleted artifact is gone.
+- **Commit discipline.** Work Blocks want one commit each. Decide your consent policy up front —
+  don't leave it ambiguous whether the pipeline may commit `[PHASE] WB-*` automatically.
+- **Rejected artifacts are quarantined, not deleted.** A gate or bleed rejection moves the file to
+  `operations/.rejected/<file>.<timestamp>` — recoverable, not gone. See
+  `operations/guides/02_MAINTENANCE.md` for the recovery steps.
 - **Hand-editing artifacts** outside Claude Code bypasses the gates *and* the ledger/INDEX
-  bookkeeping. If you must (e.g. resolving a quarantine conflict), log it yourself:
-  `.claude/scripts/append_log.sh <PHASE> <file> SUCCESS` and update the engagement INDEX.
+  bookkeeping. The sanctioned way to do this is documented in
+  `operations/guides/01_EDITING.md` — log it with
+  `.claude/scripts/append_log.sh <PHASE> <file> GATED-OVERRIDE` and update the engagement INDEX.
 - **Big corpora:** the corpus map re-reads all nodes each `/index`; beyond ~100 nodes expect
   slow, expensive runs (chunked/vector recall is on the roadmap). Batch-consume, then index once.
 - **PASS ≠ true.** A PASS verdict means "consistent with the corpus as extracted." The corpus
@@ -140,4 +143,7 @@ pointer is global per checkout.
 ## Extending the pipeline
 
 New phase = agent + skill + gate arm + template, registered in all four places plus the README
-I/O table and INDEX run-status row. The full standard is [operations/SKILL.md](operations/SKILL.md).
+I/O table and INDEX run-status row. The full standard is [operations/SKILL.md](operations/SKILL.md);
+the safety rules around editing any of these, keeping the harness healthy, and getting outputs
+that are actually good (not just gate-valid) are in
+[operations/guides/00_INDEX.md](operations/guides/00_INDEX.md).

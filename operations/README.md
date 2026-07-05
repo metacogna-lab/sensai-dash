@@ -110,5 +110,6 @@ Every gated write appends one dense line to `<eng>/telemetry/execution.log`
 hook — never by hand (sole exception: `/extract`, whose Bash-created files the Write hook can't
 see). One skill invocation = one Work Block = one git commit `[PHASE] WB-<id>: <summary>`.
 
-See [SKILL.md](SKILL.md) for the standard any new phase must follow, and the root `CLAUDE.md` for
+See [SKILL.md](SKILL.md) for the standard any new phase must follow, [guides/00_INDEX.md](guides/00_INDEX.md)
+for how to edit, maintain, and get strong outputs from this harness, and the root `CLAUDE.md` for
 how this fits the whole repository.
