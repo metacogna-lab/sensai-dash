@@ -12,7 +12,7 @@
 #     Canonicalizing ENG_ROOT/POINTER/REJECT_DIR here keeps both sides of every comparison
 #     on the same footing.
 #   - rejected files are QUARANTINED, never rm'd — to the OWNING engagement's own
-#     .rejected/ (operations/engagements/<eng>/.rejected/) so its full audit trail,
+#     .rejected/ (engagements/<eng>/.rejected/) so its full audit trail,
 #     failures included, stays inside that engagement's own repo. A shared fallback at
 #     operations/.rejected/ (in the harness repo) exists only for the malformed-segment
 #     case, where the engagement name itself isn't trustworthy enough to build a path from.
@@ -27,7 +27,7 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." &
 PROJECT_DIR="$(cd "$PROJECT_DIR" 2>/dev/null && pwd -P || echo "$PROJECT_DIR")"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POINTER="$PROJECT_DIR/operations/.active_engagement"
-ENG_ROOT="$PROJECT_DIR/operations/engagements"
+ENG_ROOT="$PROJECT_DIR/engagements"
 FALLBACK_REJECT_DIR="$PROJECT_DIR/operations/.rejected"
 
 if ! command -v python3 >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ reject_file_fallback() {
 
 REL="${FILE_PATH#"$ENG_ROOT"/}"
 
-# A bare file directly under operations/engagements/ (no subdirectory component — e.g.
+# A bare file directly under engagements/ (no subdirectory component — e.g.
 # the engagements/README.md placeholder) is not inside any engagement at all. Ungated:
 # it can't bleed into a tenant that was never its target in the first place.
 case "$REL" in
@@ -135,7 +135,7 @@ trap 'rm -f "$REASON_FILE"' EXIT
 
 if "$SCRIPT_DIR/gate.sh" "$FILE_PATH" "$TYPE" 2>"$REASON_FILE"; then
     if ! "$SCRIPT_DIR/append_log.sh" "$PHASE" "$TARGET" "SUCCESS" "$ENGAGEMENT" >/dev/null; then
-        echo "gate hook: artifact $TARGET passed the gate but the ledger append FAILED — fix operations/engagements/$ENGAGEMENT/telemetry/ and log this Work Block manually via append_log.sh." >&2
+        echo "gate hook: artifact $TARGET passed the gate but the ledger append FAILED — fix engagements/$ENGAGEMENT/telemetry/ and log this Work Block manually via append_log.sh." >&2
         exit 2
     fi
     # INDEX-drift reminder (non-blocking): a gated write is one half of a Work Block; the

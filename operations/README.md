@@ -17,12 +17,13 @@ drill into linked pages — instead of re-reading the corpus.
 
 The harness provides isolated engagement workspaces (PRD v1.00's "multi-tenancy", relabeled per review U3 until real tenancy — T1 — lands): **system logic** (`.claude/` agents/skills/hooks +
 `operations/templates/`) is global; **engagement state** (goals, corpus, outcomes, telemetry, wiki
-home) is isolated per tenant under `operations/engagements/<name>/`. Exactly one engagement is active
-at a time, named by the `operations/.active_engagement` pointer:
+home) is isolated per tenant under `engagements/<name>/` (repo root — a sibling of `.claude/` and
+`operations/`, not nested inside either). Exactly one engagement is active at a time, named by the
+`operations/.active_engagement` pointer:
 
 - `/init-engagement <name>` — scaffold a new isolated engagement, give it its **own standalone git
-  repository** (`git -C operations/engagements/<name> init`), and switch to it. This repo has
-  separate history from the harness repo, is gitignored from it (`operations/engagements/*` in the
+  repository** (`git -C engagements/<name> init`), and switch to it. This repo has
+  separate history from the harness repo, is gitignored from it (`engagements/*` in the
   root `.gitignore`), and is where all of that engagement's Work Block commits land.
 - `/switch <name>` — change the active engagement (primes context from its `INDEX.md`).
 - **Context-bleed enforcement is mechanical, not honor-system:** the gate hook derives the owning
@@ -34,7 +35,7 @@ at a time, named by the `operations/.active_engagement` pointer:
   below.
 
 All pipeline commands below operate on the active engagement; `<eng>` means
-`operations/engagements/$(cat operations/.active_engagement)`.
+`engagements/$(cat operations/.active_engagement)`.
 
 ## How to leverage the platform
 

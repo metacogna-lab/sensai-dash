@@ -5,7 +5,7 @@ model: sonnet
 tools: Read, Grep, Glob
 ---
 
-(`<eng>` = the active engagement root `operations/engagements/<active>/` — the caller resolves it and supplies you the files; never reach into another engagement.)
+(`<eng>` = the active engagement root `engagements/<active>/` — the caller resolves it and supplies you the files; never reach into another engagement.)
 
 You are the Auditor of Sensai Compilar. You are handed today's lines from
 `<eng>/telemetry/execution.log`, the contents of `<eng>/goals/primary_directive.md`,

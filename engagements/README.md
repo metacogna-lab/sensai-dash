@@ -12,4 +12,4 @@ ever need to touch an artifact outside the pipeline.
 
 If you're looking for a given engagement's actual content (research, theories, economic models,
 telemetry), `cd` into its directory and treat it as its own repo: `git -C
-operations/engagements/<name> log`, etc.
+engagements/<name> log`, etc.

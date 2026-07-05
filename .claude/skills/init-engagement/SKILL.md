@@ -1,6 +1,6 @@
 ---
 name: init-engagement
-description: Scaffolds a new isolated engagement (tenant workspace) under operations/engagements/, gives it its own standalone git repository, and switches to it. Use when starting research for a new, distinct domain/client/project that must not share context or history with existing engagements.
+description: Scaffolds a new isolated engagement (tenant workspace) under engagements/, gives it its own standalone git repository, and switches to it. Use when starting research for a new, distinct domain/client/project that must not share context or history with existing engagements.
 ---
 
 Argument: an engagement name (snake_case). (This is the PRD's `/init` command, renamed to avoid
@@ -8,10 +8,10 @@ colliding with Claude Code's built-in `/init`.)
 
 1. Sanitize the argument: lowercase letters, digits, underscores only. Reject anything containing
    `/`, `..`, or spaces.
-2. If `operations/engagements/<name>/` already exists, stop and offer `/switch <name>` instead.
+2. If `engagements/<name>/` already exists, stop and offer `/switch <name>` instead.
 3. Scaffold the isolated tree:
    ```bash
-   ENG="operations/engagements/<name>"
+   ENG="engagements/<name>"
    mkdir -p "$ENG"/{goals/audits,research_body/{00_inbox,01_raw,02_nodes,03_archive,04_quarantine},outcomes/{01_theories,02_economic_models,03_verification,longitudinal,04_alignment,05_broadcast},telemetry}
    echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" > "$ENG/telemetry/execution.log"
    ```
@@ -46,4 +46,4 @@ colliding with Claude Code's built-in `/init`.)
    one Work Block inside the new engagement's own repo. Do not run a separate `git add`/`git
    commit` yourself; that already happened. If the warning "no git repo yet" appears, step 6 was
    skipped or failed — fix that before continuing, don't just retry the log call.
-9. Report: `[SUCCESS] Initialized and switched to <name>. Own repo at operations/engagements/<name>/.git.`
+9. Report: `[SUCCESS] Initialized and switched to <name>. Own repo at engagements/<name>/.git.`

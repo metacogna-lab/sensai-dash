@@ -12,11 +12,11 @@ P1 hardening). Two writes, both via the Write tool so the `PostToolUse` hook act
    with the right `PHASE`.
 2. **Invalid case:** write the same path with a required field/section missing. Confirm: the
    write is blocked (you'll see the `PostToolUse:Write hook blocking error` message), the file is
-   quarantined to that engagement's own `operations/engagements/<eng>/.rejected/` (not deleted),
+   quarantined to that engagement's own `engagements/<eng>/.rejected/` (not deleted),
    and the ledger shows `GATED`.
 3. **Clean up:** remove both test artifacts and reset the ledger to its header row before
    committing — test noise in the ledger corrupts the WB-ID sequence for real work. Since Work
-   Blocks now auto-commit, also check `git -C operations/engagements/<eng> log` for stray test
+   Blocks now auto-commit, also check `git -C engagements/<eng> log` for stray test
    commits and `git reset --soft`/amend them away before you're done — a smoke test that leaves
    `[CONSUME] WB-004: __bootstrap_selftest__.md (GATED)` in real history is exactly the noise
    step 3 exists to prevent.
@@ -77,7 +77,7 @@ content is correct" — they never did, and the docs should keep saying so.
 ## `.rejected/` recovery
 
 Since the P1 hardening, a gate/bleed rejection moves the file to that engagement's own
-`operations/engagements/<eng>/.rejected/<filename>.<unix-timestamp>` instead of deleting it (the
+`engagements/<eng>/.rejected/<filename>.<unix-timestamp>` instead of deleting it (the
 one exception — a malformed engagement-name segment — falls back to the shared
 `operations/.rejected/` in the harness repo, since the name isn't trustworthy enough to build a
 per-engagement path from). To recover:
@@ -98,7 +98,7 @@ Every command in this harness operates on exactly one of two trust boundaries:
 
 - **The harness repo** (this repo) — `.claude/`, `operations/` system files, `agents/`, `tests/`.
   Commits here require operator consent, same as any dev repo; the Stop hook only reminds.
-- **The active engagement's own repo** — `operations/engagements/<name>/`, created by
+- **The active engagement's own repo** — `engagements/<name>/`, created by
   `/init-engagement` and gitignored from the harness repo. Every Work Block commits here
   *automatically*, via `append_log.sh`. This is the harness's own designed automation, not a
   session deciding to commit on the operator's behalf — don't second-guess it by adding consent

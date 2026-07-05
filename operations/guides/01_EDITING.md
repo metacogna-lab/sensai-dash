@@ -54,7 +54,7 @@ the post-review hardening) user artifacts. Rules, non-negotiable:
   finding E9 / eng finding F5; the current `post_write_gate.sh` fails closed on payload-parse
   errors and a missing `python3`. Keep it that way when you touch this file.
 - **Quarantine, don't delete.** Rejected/bled writes move to the OWNING engagement's own
-  `.rejected/` (`operations/engagements/<eng>/.rejected/`, gitignored inside that engagement's own
+  `.rejected/` (`engagements/<eng>/.rejected/`, gitignored inside that engagement's own
   repo) with a timestamp suffix, never `rm -f`. This was eng finding F2 (Edit failures were
   destroying pre-existing artifacts). If you're tempted to add another `rm -f` on a new failure
   path, route it through the existing `reject_file()` helper instead. The one exception is the
@@ -65,9 +65,9 @@ the post-review hardening) user artifacts. Rules, non-negotiable:
   incoming path with `os.path.realpath`, canonicalizes `PROJECT_DIR` itself the same way
   (`pwd -P` — a symlinked ancestor otherwise defeats the prefix match silently, fail-open; the
   bats suite caught this once), and only acts on paths under this repo's
-  `operations/engagements/` root — this was eng finding F1 (an unanchored path could match and
+  `engagements/` root — this was eng finding F1 (an unanchored path could match and
   quarantine files in an unrelated checkout). Any new path-matching logic must do the same. Also
-  remember a bare file directly under `operations/engagements/` (no engagement subdirectory — e.g.
+  remember a bare file directly under `engagements/` (no engagement subdirectory — e.g.
   the tracked `README.md` there) is not inside any engagement; it must be a no-op, not treated as
   a bleed into an engagement named after the filename.
 - **Every Work Block commit happens inside the engagement's OWN repo, automatically.**

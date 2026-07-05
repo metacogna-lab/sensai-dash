@@ -36,7 +36,7 @@ if [ -z "$ENGAGEMENT" ]; then
     ENGAGEMENT=$(tr -cd 'a-z0-9_' < "$POINTER")
 fi
 
-ENG_DIR="$PROJECT_DIR/operations/engagements/$ENGAGEMENT"
+ENG_DIR="$PROJECT_DIR/engagements/$ENGAGEMENT"
 LOG_FILE="$ENG_DIR/telemetry/execution.log"
 
 mkdir -p "$(dirname "$LOG_FILE")"

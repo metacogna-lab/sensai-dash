@@ -60,7 +60,7 @@ teardown() { teardown_sandbox; }
 
 @test "append_log.sh: warns but still succeeds when the engagement has no git repo yet" {
     NOGIT_ENG="nogit_eng"
-    NOGIT_DIR="$CLAUDE_PROJECT_DIR/operations/engagements/$NOGIT_ENG"
+    NOGIT_DIR="$CLAUDE_PROJECT_DIR/engagements/$NOGIT_ENG"
     mkdir -p "$NOGIT_DIR/telemetry"
     run "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$NOGIT_ENG"
     [ "$status" -eq 0 ]

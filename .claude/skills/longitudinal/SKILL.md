@@ -3,7 +3,7 @@ name: longitudinal
 description: Longitudinal analysis of the pipeline over a time window — question coverage trajectory, conflict burn-down, conversion funnel, drift trends — from execution.log and dated artifacts. Use for the LONGITUDINAL phase, typically weekly or after a milestone.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the LONGITUDINAL phase. Argument: a time window ("7d", "since WB-020", "all"); default "7d".
 

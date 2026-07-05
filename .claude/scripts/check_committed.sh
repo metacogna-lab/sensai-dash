@@ -32,8 +32,8 @@ check_repo() {
 check_repo "$PROJECT_DIR" "the harness repo" \
     "If the user has approved committing this harness Work Block, run: git add -A && git commit -m \"[PHASE] WB-<id>: <summary>\". Do not commit without explicit user consent."
 
-if [ -d "$PROJECT_DIR/operations/engagements" ]; then
-    for eng_dir in "$PROJECT_DIR"/operations/engagements/*/; do
+if [ -d "$PROJECT_DIR/engagements" ]; then
+    for eng_dir in "$PROJECT_DIR"/engagements/*/; do
         [ -d "$eng_dir" ] || continue
         eng_name="$(basename "$eng_dir")"
         check_repo "$eng_dir" "engagement '$eng_name'" \

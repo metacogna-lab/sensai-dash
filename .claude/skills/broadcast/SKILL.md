@@ -3,7 +3,7 @@ name: broadcast
 description: Translates one mature Economic Model or Alignment document into external-facing copy in outcomes/05_broadcast. Use for the BROADCAST phase once a verified model or alignment doc exists.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the BROADCAST phase. Argument: a filename in `<eng>/outcomes/02_economic_models/` or
 `<eng>/outcomes/04_alignment/`.

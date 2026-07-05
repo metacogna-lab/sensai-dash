@@ -53,11 +53,11 @@ EOF
 }
 
 @test "post_write_gate: a bare file directly under engagements/ (no subdirectory) is a no-op" {
-    # Regression case: operations/engagements/README.md is a real file this harness ships.
+    # Regression case: engagements/README.md is a real file this harness ships.
     # Its path has no subdirectory component after ENG_ROOT, so REL has no "/" and
     # ENGAGEMENT would otherwise become "README.md" — treated as an unknown engagement
     # name and rejected as context bleed. Caught live shipping this exact file.
-    TARGET="$CLAUDE_PROJECT_DIR/operations/engagements/README.md"
+    TARGET="$CLAUDE_PROJECT_DIR/engagements/README.md"
     echo "# Engagements" > "$TARGET"
     PAYLOAD=$(hook_payload "$TARGET")
     LOG_BEFORE=$(cat "$ENG_DIR/telemetry/execution.log")
@@ -98,7 +98,7 @@ EOF
     # bats can't drive the Skill/Agent tool to re-run /init-engagement directly; this test
     # instead proves the underlying bleed mechanism behaves correctly, which is what F4's fix
     # (switch-before-seed ordering in init-engagement/SKILL.md) depends on staying true.
-    OTHER_ENG_DIR="$CLAUDE_PROJECT_DIR/operations/engagements/other_eng/research_body/02_nodes"
+    OTHER_ENG_DIR="$CLAUDE_PROJECT_DIR/engagements/other_eng/research_body/02_nodes"
     mkdir -p "$OTHER_ENG_DIR"
     TARGET="$OTHER_ENG_DIR/node--bleed.md"
     write_valid_node "$TARGET"
@@ -109,7 +109,7 @@ EOF
     [ ! -f "$TARGET" ]
     # Rejected into the TARGETED engagement's own .rejected/, not testeng's — each
     # engagement's audit trail (failures included) stays inside its own repo/tree.
-    ls "$CLAUDE_PROJECT_DIR/operations/engagements/other_eng/.rejected/" | grep -q "node--bleed.md"
+    ls "$CLAUDE_PROJECT_DIR/engagements/other_eng/.rejected/" | grep -q "node--bleed.md"
 }
 
 @test "post_write_gate: missing active-engagement pointer quarantines the write" {

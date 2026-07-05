@@ -3,11 +3,11 @@ name: switch
 description: Switches the active engagement (tenant workspace) — all pipeline commands operate on exactly one engagement at a time, locked by the operations/.active_engagement pointer. Use when the operator wants to work on a different engagement, or names one that isn't active.
 ---
 
-Argument: an engagement name (snake_case). Engagements live in `operations/engagements/<name>/`.
+Argument: an engagement name (snake_case). Engagements live in `engagements/<name>/`.
 
 1. Sanitize the argument: lowercase letters, digits, underscores only. Reject anything containing
    `/`, `..`, or spaces — engagement isolation depends on this.
-2. Verify `operations/engagements/<name>/` exists. If not, tell the operator:
+2. Verify `engagements/<name>/` exists. If not, tell the operator:
    `[ERROR] Engagement '<name>' not found. Use /init-engagement <name> to create it.` and list the
    engagements that do exist.
 3. Write the name to `operations/.active_engagement` (overwrite, no newline issues — the hooks strip

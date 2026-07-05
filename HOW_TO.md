@@ -45,7 +45,7 @@ at exactly the points that need human judgment.
    table's **Blockers column literally tells you what to do next**.
 
 **Every engagement is its own git repository.** `/init-engagement <name>` runs `git init` inside
-`operations/engagements/<name>/` and gives it its own `.gitignore` — separate history from this
+`engagements/<name>/` and gives it its own `.gitignore` — separate history from this
 harness repo, and gitignored from it entirely (you'll never see engagement changes in this repo's
 `git status`). Every Work Block commits automatically into the *engagement's* repo, not this one;
 see "Sharp edges" below.
@@ -56,8 +56,8 @@ A short demo text ships in every fresh checkout so you can watch one artifact be
 without hunting for a source file first:
 
 ```bash
-cp operations/engagements/compilar/samples/demo_corpus.txt \
-   operations/engagements/compilar/research_body/01_raw/
+cp engagements/compilar/samples/demo_corpus.txt \
+   engagements/compilar/research_body/01_raw/
 ```
 
 Then, in Claude Code: `/consume demo_corpus.txt`. In under a minute you'll have a real
@@ -73,7 +73,7 @@ continue below; the demo corpus's node can stay or be deleted, it doesn't block 
 
 Using the default `compilar` engagement (or `/init-engagement my_domain` for a fresh one):
 
-1. **Stage sources.** PDFs → `operations/engagements/compilar/research_body/00_inbox/`; plain text
+1. **Stage sources.** PDFs → `engagements/compilar/research_body/00_inbox/`; plain text
    → `.../01_raw/`.
 2. **`/question "Decide whether X is viable as a product by Q4"`** — the highest-leverage step.
    A fable-tier strategist turns this into 3-7 falsifiable questions plus hard constraints. Be
@@ -137,7 +137,7 @@ pointer and primes context from that engagement's INDEX.md; all state (goals, co
 ledger) is per-engagement, in its own git repository with its own commit history. System logic
 (skills, agents, hooks, templates) is shared. Don't run two Claude Code sessions against the same
 checkout with different engagements active — the pointer is global per checkout. Because each
-engagement is its own repo, it's also independently portable: `operations/engagements/<name>/` can
+engagement is its own repo, it's also independently portable: `engagements/<name>/` can
 be copied, backed up, or (later) pushed to its own remote without touching any other engagement or
 the harness itself.
 
@@ -150,7 +150,7 @@ the harness itself.
 | "Gate failed ... quarantined" | artifact missing schema field/section | read the reason; compare `operations/templates/<type>.md`; re-run the phase (see `operations/guides/02_MAINTENANCE.md`) |
 | `/analyze` refuses to run | no `research_questions.md` | run `/question` first — this is deliberate |
 | `/extract` produced garbage | scanned/image PDF | the skill falls back to Read-tool transcription; or OCR the PDF externally first |
-| Ledger looks wrong/missing | file hand-edited outside the pipeline | ledger is `append_log.sh`-written only; `git -C operations/engagements/<name> log` to see committed history |
+| Ledger looks wrong/missing | file hand-edited outside the pipeline | ledger is `append_log.sh`-written only; `git -C engagements/<name> log` to see committed history |
 | "no git repo yet" warning | engagement predates repo-per-engagement | run `/bootstrap`, which initializes one |
 
 ## Sharp edges (know before a long run)

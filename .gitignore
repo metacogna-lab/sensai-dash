@@ -1,14 +1,12 @@
 *.env
 
-# Each engagement under operations/engagements/ is its OWN standalone git repository
+# Each engagement under engagements/ is its OWN standalone git repository
 # (see .claude/skills/init-engagement/SKILL.md and operations/guides/02_MAINTENANCE.md).
 # The harness repo must not track engagement contents — that would defeat the isolation
 # the whole point of per-engagement repos is to provide (separate history, separate
 # lifecycle, no risk of one client's data ending up in another's or the harness
 # template's own git log). Exception: a short README explaining this stays tracked so
 # anyone browsing the harness repo understands why the directory looks empty here.
-operations/engagements/*
-!operations/engagements/README.md
 engagements/*
+!engagements/README.md
 agents/*
-

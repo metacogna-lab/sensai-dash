@@ -12,11 +12,12 @@ ENG="testeng"
 setup_sandbox() {
     export CLAUDE_PROJECT_DIR
     CLAUDE_PROJECT_DIR="$(mktemp -d)"
-    export ENG_DIR="$CLAUDE_PROJECT_DIR/operations/engagements/$ENG"
+    export ENG_DIR="$CLAUDE_PROJECT_DIR/engagements/$ENG"
     mkdir -p "$ENG_DIR"/research_body/{02_nodes,04_quarantine} \
              "$ENG_DIR"/outcomes/{01_theories,02_economic_models,03_verification,04_alignment,05_broadcast} \
              "$ENG_DIR"/goals/audits \
              "$ENG_DIR"/telemetry
+    mkdir -p "$CLAUDE_PROJECT_DIR/operations"
     echo "$ENG" > "$CLAUDE_PROJECT_DIR/operations/.active_engagement"
     echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" > "$ENG_DIR/telemetry/execution.log"
     printf '# engagement index\n' > "$ENG_DIR/INDEX.md"
