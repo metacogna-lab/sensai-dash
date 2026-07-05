@@ -9,3 +9,6 @@
 # anyone browsing the harness repo understands why the directory looks empty here.
 operations/engagements/*
 !operations/engagements/README.md
+engagements/*
+agents/*
+
