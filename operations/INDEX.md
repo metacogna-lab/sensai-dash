@@ -15,8 +15,8 @@ last_checkpoint: 2026-07-05
 
 | Engagement | Directive (one line) | Status | Wiki home |
 | :--- | :--- | :--- | :--- |
-| compilar | Transform raw research into computational models and economic value | Consumed one demo corpus | [engagements/compilar/INDEX.md](engagements/compilar/INDEX.md) |
-| **isolation_demo** ← active | Verify per-engagement repo isolation (no research content) | Verification in progress | [engagements/isolation_demo/INDEX.md](engagements/isolation_demo/INDEX.md) |
+| compilar | Transform raw research into computational models and economic value | Consumed one demo corpus | [../engagements/compilar/INDEX.md](../engagements/compilar/INDEX.md) |
+| **isolation_demo** ← active | Verify per-engagement repo isolation (no research content) | Verification in progress | [../engagements/isolation_demo/INDEX.md](../engagements/isolation_demo/INDEX.md) |
 
 - Switch tenants with `/switch <name>`; create one with `/init-engagement <name>`.
 - The active pointer lives in [.active_engagement](.active_engagement); the gate hook quarantines

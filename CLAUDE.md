@@ -26,46 +26,48 @@ CLAUDE.md                 ← you are here (harness manual)
 ├── scripts/              # hook implementations: post_write_gate.sh gate.sh append_log.sh
 │                         #   check_committed.sh
 └── settings.json         # wires PostToolUse(Write|Edit) gate + Stop reminder
-operations/                  # THE WIKI + engagement-workspace pipeline state (start at operations/INDEX.md)
+operations/                  # THE WIKI + engagement-workspace SYSTEM files (start at operations/INDEX.md)
 ├── INDEX.md              # GLOBAL wiki home: engagement registry, active marker
 ├── README.md             # architecture + "how to leverage the platform" + I/O contract table
 ├── SKILL.md              # standard for adding new phases (4 registration points)
 ├── guides/               # editing/maintenance/output-quality/prompt-tuning guides
 ├── templates/            # Progressive Disclosure schemas (global system logic)
-├── .active_engagement    # pointer: which tenant the pipeline operates on
-└── engagements/          # ISOLATED tenant state — gitignored from THIS repo; see below
-    ├── README.md         # (the one tracked file here — explains why the rest is invisible)
-    └── compilar/         # (default engagement; more via /init-engagement) — its OWN git repo
-        ├── .git/         # standalone repository — separate history from the harness repo
-        ├── .gitignore    # ignores .rejected/ (quarantine scratch, not a Work Block product)
-        ├── INDEX.md      # engagement wiki home: run status, artifact index
-        ├── goals/        # primary_directive, active_milestones, research_questions, audits/
-        ├── research_body/# 00_inbox → 01_raw → 02_nodes → 03_archive; 04_quarantine (HITL
-        │                 #   conflict queue); corpus_map.md
-        ├── outcomes/     # 01_theories/ 02_economic_models/ 03_verification/ 04_alignment/
-        │                 #   05_broadcast/ (numbered = pipeline order) + longitudinal/ (unprefixed,
-        │                 #   cross-cutting — reads the others rather than sitting in their chain)
-        └── telemetry/    # execution.log — flat append-only Work Block ledger (per tenant)
+└── .active_engagement    # pointer: which tenant the pipeline operates on
+engagements/              # ISOLATED tenant state — root-level sibling of .claude/ and
+│                         #   operations/, NOT nested in either; gitignored from THIS repo
+├── README.md             # (the one tracked file here — explains why the rest is invisible)
+└── compilar/             # (default engagement; more via /init-engagement) — its OWN git repo
+    ├── .git/             # standalone repository — separate history from the harness repo
+    ├── .gitignore        # ignores .rejected/ (quarantine scratch, not a Work Block product)
+    ├── INDEX.md          # engagement wiki home: run status, artifact index
+    ├── goals/            # primary_directive, active_milestones, research_questions, audits/
+    ├── research_body/    # 00_inbox → 01_raw → 02_nodes → 03_archive; 04_quarantine (HITL
+    │                     #   conflict queue); corpus_map.md
+    ├── outcomes/         # 01_theories/ 02_economic_models/ 03_verification/ 04_alignment/
+    │                     #   05_broadcast/ (numbered = pipeline order) + longitudinal/ (unprefixed,
+    │                     #   cross-cutting — reads the others rather than sitting in their chain)
+    └── telemetry/        # execution.log — flat append-only Work Block ledger (per tenant)
 agents/                   # (repo root) ACTIVE design inputs: PRD, Hooks spec, task ledger
 └── archive/              # consumed/processed design drafts (historical record)
 ```
 
 **Two git repos, two trust boundaries.** This repo (the harness — `.claude/`, `operations/`
 system files, `agents/`, `tests/`) requires operator consent to commit, same as any dev repo. Each
-engagement under `operations/engagements/<name>/` is a **separate, standalone repository** that
-the harness commits to automatically, once per Work Block — that automation is infrastructure the
-operator explicitly asked for, distinct from a session committing the operator's own working repo
-without asking. Never confuse the two: don't `cd` into an engagement expecting harness-repo state,
-and don't expect the harness repo's `git log` to show engagement activity — it's gitignored by
-design (`operations/engagements/*` in the root `.gitignore`).
+engagement under `engagements/<name>/` (repo root — a sibling of `.claude/` and `operations/`, not
+nested in either) is a **separate, standalone repository** that the harness commits to
+automatically, once per Work Block — that automation is infrastructure the operator explicitly
+asked for, distinct from a session committing the operator's own working repo without asking.
+Never confuse the two: don't `cd` into an engagement expecting harness-repo state, and don't
+expect the harness repo's `git log` to show engagement activity — it's gitignored by design
+(`engagements/*` in the root `.gitignore`).
 
 ## Operating protocol
 
 - **Multi-tenancy (PRD v1.00):** every pipeline command operates on exactly one engagement — the
   one named in `operations/.active_engagement`. `/switch <name>` changes it; `/init-engagement <name>`
-  scaffolds a new one. The gate hook mechanically deletes + blocks any gated write whose path
+  scaffolds a new one. The gate hook mechanically quarantines + blocks any gated write whose path
   targets a different engagement (context bleed) or has a malformed engagement segment (path
-  traversal). Skills resolve `<eng> = operations/engagements/$(cat operations/.active_engagement)` first.
+  traversal). Skills resolve `<eng> = engagements/$(cat operations/.active_engagement)` first.
 - **Work Blocks:** one skill invocation = one logged ledger line (in the active engagement's
   `telemetry/execution.log`) = one commit `[PHASE] WB-<id>: <target> (<status>)`, made
   automatically by `append_log.sh` inside that engagement's own repo — regular by construction,

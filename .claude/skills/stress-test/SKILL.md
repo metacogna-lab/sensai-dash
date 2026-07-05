@@ -3,7 +3,7 @@ name: stress-test
 description: Systemic self-audit — stress-tests one output artifact (theory, economic model, or alignment doc) against the source Nodes, corpus map, and calibrated constraints, producing a PASS / PASS-WITH-NOTES / FAIL verdict in outcomes/03_verification. Use for the VERIFY phase, before an artifact is treated as final or fed to /synthesize or /broadcast.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the VERIFY phase (Fable Interaction V.C). Argument: an artifact filename from
 `<eng>/outcomes/01_theories/`, `<eng>/outcomes/02_economic_models/`, or `<eng>/outcomes/04_alignment/`.
