@@ -11,6 +11,8 @@ economic evaluation → verification → macro-synthesis — into verified strat
 is no build/lint/test toolchain; the "code" is Claude Code native configuration plus a strict
 directory contract enforced by hooks.
 
+***ALWAYS EXCLUDE the directory @app/ from the pipeline.
+
 ## Map
 
 ```

@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* ── Shunyata UI tokens ──────────────────────────────────────────────
+   The Void & The Vector. Deep negative space, dark paper elevation via
+   sharp 1px borders (never soft shadows), one kinetic emerald accent. */
+@theme {
+  --color-void: #0e1015;
+  --color-paper: #181b21;
+  --color-paper-2: #1e222a;
+  --color-edge: #2b303b;
+  --color-edge-soft: #22262e;
+  --color-emerald: #00ff9d;
+  --color-emerald-dim: #0a3f2c;
+  --color-ink: #e6e9ef;
+  --color-ink-dim: #8b93a1;
+  --color-glass: rgba(14, 16, 21, 0.6);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* room for the fixed glass nav (bottom on mobile, top on desktop) */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+::selection {
+  background: var(--color-emerald);
+  color: var(--color-void);
+}
+
+/* Thin, high-contrast scrollbars — IDE telemetry feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-edge) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-edge);
+  border-radius: 9999px;
+}
+
+/* Rendered-markdown surface inside the drawer */
+.prose-sensai {
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+.prose-sensai h1,
+.prose-sensai h2,
+.prose-sensai h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 1.4em 0 0.5em;
+}
+.prose-sensai h1 { font-size: 1.5rem; }
+.prose-sensai h2 { font-size: 1.2rem; color: #f2f5fa; }
+.prose-sensai h3 { font-size: 1.05rem; }
+.prose-sensai p { margin: 0.75em 0; }
+.prose-sensai ul,
+.prose-sensai ol { margin: 0.75em 0; padding-left: 1.25em; }
+.prose-sensai li { margin: 0.3em 0; }
+.prose-sensai ul { list-style: disc; }
+.prose-sensai ol { list-style: decimal; }
+.prose-sensai a { color: var(--color-emerald); text-decoration: none; }
+.prose-sensai a:hover { text-decoration: underline; }
+.prose-sensai blockquote {
+  border-left: 2px solid var(--color-emerald);
+  padding-left: 1em;
+  color: var(--color-ink-dim);
+  margin: 1em 0;
+}
+.prose-sensai code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-void);
+  border: 1px solid var(--color-edge);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.prose-sensai pre {
+  font-family: var(--font-mono);
+  background: var(--color-void);
+  border: 1px solid var(--color-edge);
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+.prose-sensai pre code { border: 0; padding: 0; background: transparent; }
+.prose-sensai hr { border-color: var(--color-edge); margin: 1.5em 0; }
+.prose-sensai table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+.prose-sensai th,
+.prose-sensai td { border: 1px solid var(--color-edge); padding: 0.5em 0.75em; text-align: left; }
+.prose-sensai th { background: var(--color-paper-2); }
