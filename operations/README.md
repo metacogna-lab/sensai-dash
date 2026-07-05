@@ -57,7 +57,7 @@ All pipeline commands below operate on the active engagement; `<eng>` means
    PASS/PASS-WITH-NOTES/FAIL verdict. Stress-test theories and models *before* building on them —
    FAIL material is inadmissible downstream.
 8. **`/synthesize`** — compiles verified theories + models + verdicts into the run's primary
-   deliverable: the strategic alignment document (`<eng>/outcomes/alignment/`), with step-by-step
+   deliverable: the strategic alignment document (`<eng>/outcomes/04_alignment/`), with step-by-step
    execution detail cross-referenced to sources and quarantined conflicts carried as open risks.
    Stress-test it too, then **`/broadcast`** it into external-facing copy.
 
@@ -91,12 +91,12 @@ the schema (from `templates/`) on every write and logs the Work Block.
 | EXTRACT | `/extract` | — (`pdftotext`, Read fallback) | `<eng>/research_body/00_inbox/` | `<eng>/research_body/01_raw/*.txt` (source → `03_archive/`) | non-empty prose (manual; Bash path logs via `append_log.sh`) |
 | CONSUME | `/consume` | consumer (haiku) | `<eng>/research_body/01_raw/` | `<eng>/research_body/02_nodes/node--<slug>.md` (raw → `03_archive/`) | — |
 | INDEX | `/index` | indexer (sonnet) | all of `02_nodes/` | `<eng>/research_body/corpus_map.md` (overwrite; git keeps history) | `## Baseline (As-Is)` |
-| ANALYZE | `/analyze` | analyst (sonnet) | `02_nodes/` + `corpus_map.md` + research questions | `<eng>/outcomes/theories/theory--<slug>.md` | — |
+| ANALYZE | `/analyze` | analyst (sonnet) | `02_nodes/` + `corpus_map.md` + research questions | `<eng>/outcomes/01_theories/theory--<slug>.md` | — |
 | QUARANTINE | (via `/analyze`) | — | theory `## Open Conflicts` | `<eng>/research_body/04_quarantine/conflict--<slug>.md` | human-resolved only |
-| EVALUATE | `/evaluate` | evaluator (opus) | `<eng>/outcomes/theories/` | `<eng>/outcomes/economic_models/econ--<slug>.md` | `## Monetization Vector` |
-| VERIFY | `/stress-test` | verifier (opus) | one artifact + its `source:` chain + constraints | `<eng>/outcomes/verification/verify--<stem>.md` | `## Verdict` |
-| SYNTHESIZE | `/synthesize` | synthesist (fable) | verified theories/models + quarantine + corpus map | `<eng>/outcomes/alignment/alignment--<slug>--<date>.md` | `## Execution Detail` |
-| BROADCAST | `/broadcast` | broadcaster (haiku) | verified `economic_models/` or `alignment/` | `<eng>/outcomes/broadcast/post--<slug>.md` | no FAIL-verdict inputs |
+| EVALUATE | `/evaluate` | evaluator (opus) | `<eng>/outcomes/01_theories/` | `<eng>/outcomes/02_economic_models/econ--<slug>.md` | `## Monetization Vector` |
+| VERIFY | `/stress-test` | verifier (opus) | one artifact + its `source:` chain + constraints | `<eng>/outcomes/03_verification/verify--<stem>.md` | `## Verdict` |
+| SYNTHESIZE | `/synthesize` | synthesist (fable) | verified theories/models + quarantine + corpus map | `<eng>/outcomes/04_alignment/alignment--<slug>--<date>.md` | `## Execution Detail` |
+| BROADCAST | `/broadcast` | broadcaster (haiku) | verified `economic_models/` or `alignment/` | `<eng>/outcomes/05_broadcast/post--<slug>.md` | no FAIL-verdict inputs |
 | LONGITUDINAL | `/longitudinal` | historian (sonnet) | `<eng>/telemetry/execution.log` + dated artifacts | `<eng>/outcomes/longitudinal/long--<window>--<date>.md` | grounded numbers only |
 | AUDIT | `/daily-summary` | auditor (sonnet) | today's log + `<eng>/goals/` | `<eng>/goals/audits/summary_<date>.md` | — |
 

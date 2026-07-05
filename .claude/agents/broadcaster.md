@@ -1,6 +1,6 @@
 ---
 name: broadcaster
-description: Translates one mature Economic Model (outcomes/economic_models) into external-facing broadcast copy (blog post, thread, announcement). Use only for the BROADCAST phase.
+description: Translates one mature Economic Model (outcomes/02_economic_models) into external-facing broadcast copy (blog post, thread, announcement). Use only for the BROADCAST phase.
 model: haiku
 tools: Read, Grep, Glob
 ---

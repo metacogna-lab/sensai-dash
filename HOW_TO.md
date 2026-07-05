@@ -70,7 +70,7 @@ Using the default `compilar` engagement (or `/init-engagement my_domain` for a f
    grounded / extrapolated / unsupported, with a hard verdict. **Do this before building on any
    artifact.** FAIL material is inadmissible downstream.
 8. **`/synthesize`** — compiles verified theories + models + verdicts into the run's deliverable:
-   `outcomes/alignment/alignment--<slug>--<date>.md`, with execution detail cross-referenced to
+   `outcomes/04_alignment/alignment--<slug>--<date>.md`, with execution detail cross-referenced to
    sources and unresolved conflicts carried as open risks. Stress-test it too, then
    **`/broadcast`** it — and read broadcast copy yourself before anything leaves the machine.
 
@@ -98,9 +98,9 @@ forgot to `/switch`.
 | Stop point | Where | What you do |
 |---|---|---|
 | Quarantined conflict | `research_body/04_quarantine/conflict--*.md` | Read both claims, decide, fill `resolution:`, set `status: resolved`, move to `03_archive/` |
-| FAIL verdict | `outcomes/verification/verify--*.md` | Read `## Required Repairs`, re-run the producing phase with that feedback |
+| FAIL verdict | `outcomes/03_verification/verify--*.md` | Read `## Required Repairs`, re-run the producing phase with that feedback |
 | Gate rejection ×2 | chat output | If a rewrite fails twice, stop retrying — check the template vs the agent's output yourself |
-| Broadcast sign-off | `outcomes/broadcast/` | Nothing publishes itself; external posting is always your manual act |
+| Broadcast sign-off | `outcomes/05_broadcast/` | Nothing publishes itself; external posting is always your manual act |
 
 A growing quarantine queue is the #1 sign a run needs your input. Service it before consuming
 more corpus.

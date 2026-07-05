@@ -1,5 +1,5 @@
 <!--
-Progressive Disclosure schema for VERIFY-phase output (outcomes/verification/).
+Progressive Disclosure schema for VERIFY-phase output (outcomes/03_verification/).
 Frontmatter fields are load-bearing: the gate hook parses `type` and `status` literally, and
 requires a non-empty `## Verdict` section.
 -->

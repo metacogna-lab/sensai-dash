@@ -84,12 +84,12 @@ case "$FILE_PATH" in
     */research_body/02_nodes/*.md)      PHASE="CONSUME";      TYPE="node";               TPL="standard_node.md" ;;
     */research_body/corpus_map.md)      PHASE="INDEX";        TYPE="corpus_map";         TPL="corpus_map.md" ;;
     */research_body/04_quarantine/*.md) PHASE="QUARANTINE";   TYPE="conflict";           TPL="conflict.md" ;;
-    */outcomes/theories/*.md)           PHASE="ANALYZE";      TYPE="theory";             TPL="theory.md" ;;
-    */outcomes/economic_models/*.md)    PHASE="EVALUATE";     TYPE="economic_model";     TPL="economic_model.md" ;;
-    */outcomes/verification/*.md)       PHASE="VERIFY";       TYPE="verification";       TPL="verification.md" ;;
+    */outcomes/01_theories/*.md)        PHASE="ANALYZE";      TYPE="theory";             TPL="theory.md" ;;
+    */outcomes/02_economic_models/*.md) PHASE="EVALUATE";     TYPE="economic_model";     TPL="economic_model.md" ;;
+    */outcomes/03_verification/*.md)    PHASE="VERIFY";       TYPE="verification";       TPL="verification.md" ;;
     */outcomes/longitudinal/*.md)       PHASE="LONGITUDINAL"; TYPE="longitudinal";       TPL="longitudinal_report.md" ;;
-    */outcomes/alignment/*.md)          PHASE="SYNTHESIZE";   TYPE="alignment";          TPL="alignment.md" ;;
-    */outcomes/broadcast/*.md)          PHASE="BROADCAST";    TYPE="broadcast";          TPL="broadcast_post.md" ;;
+    */outcomes/04_alignment/*.md)       PHASE="SYNTHESIZE";   TYPE="alignment";          TPL="alignment.md" ;;
+    */outcomes/05_broadcast/*.md)       PHASE="BROADCAST";    TYPE="broadcast";          TPL="broadcast_post.md" ;;
     */goals/research_questions.md)      PHASE="QUESTION";     TYPE="research_questions"; TPL="research_questions.md" ;;
     */goals/audits/*.md)                PHASE="AUDIT";        TYPE="audit";              TPL="daily_audit.md" ;;
     *) exit 0 ;;

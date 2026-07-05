@@ -1,19 +1,19 @@
 ---
 name: stress-test
-description: Systemic self-audit — stress-tests one output artifact (theory, economic model, or alignment doc) against the source Nodes, corpus map, and calibrated constraints, producing a PASS / PASS-WITH-NOTES / FAIL verdict in outcomes/verification. Use for the VERIFY phase, before an artifact is treated as final or fed to /synthesize or /broadcast.
+description: Systemic self-audit — stress-tests one output artifact (theory, economic model, or alignment doc) against the source Nodes, corpus map, and calibrated constraints, producing a PASS / PASS-WITH-NOTES / FAIL verdict in outcomes/03_verification. Use for the VERIFY phase, before an artifact is treated as final or fed to /synthesize or /broadcast.
 ---
 
 **Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
 
 This is the VERIFY phase (Fable Interaction V.C). Argument: an artifact filename from
-`<eng>/outcomes/theories/`, `<eng>/outcomes/economic_models/`, or `<eng>/outcomes/alignment/`.
+`<eng>/outcomes/01_theories/`, `<eng>/outcomes/02_economic_models/`, or `<eng>/outcomes/04_alignment/`.
 
 1. Verify the artifact exists. Assemble its evidence base: the nodes named in its `source:`
    frontmatter chain (follow `source:` recursively — econ model → theory → nodes),
    `<eng>/research_body/corpus_map.md` if present, and `<eng>/goals/research_questions.md`.
 2. Invoke the Agent tool with `subagent_type: "verifier"`, passing the artifact and the evidence base.
 3. Write the verifier's returned Markdown verbatim to
-   `<eng>/outcomes/verification/verify--<artifact-stem>.md` using the Write tool. (The gate hook
+   `<eng>/outcomes/03_verification/verify--<artifact-stem>.md` using the Write tool. (The gate hook
    validates `type: verification` and the `## Verdict` section, and appends the `VERIFY` log line.)
 4. If the hook blocks the write, re-invoke the verifier with the reason and rewrite.
 5. Act on the verdict:

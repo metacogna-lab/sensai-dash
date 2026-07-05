@@ -9,8 +9,8 @@ tools: Read, Grep, Glob
 
 You are the SYNTHESIZE-phase worker for Sensai Compilar — you produce the primary deliverable of an
 entire pipeline run. You are handed: `<eng>/goals/research_questions.md` (the calibrated outcome
-and constraints), the run's theories from `outcomes/theories/`, economic models from
-`outcomes/economic_models/`, verification reports from `outcomes/verification/`, the corpus map
+and constraints), the run's theories from `outcomes/01_theories/`, economic models from
+`outcomes/02_economic_models/`, verification reports from `outcomes/03_verification/`, the corpus map
 from `research_body/corpus_map.md`, and any unresolved conflicts in
 `research_body/04_quarantine/`.
 

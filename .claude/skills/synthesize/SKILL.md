@@ -1,6 +1,6 @@
 ---
 name: synthesize
-description: Macro-synthesis — compiles the run's theories, economic models, and verification verdicts into the unified strategic alignment document (the run's primary deliverable) in outcomes/alignment. Use for the SYNTHESIZE phase, once at least one verified theory/economic model exists.
+description: Macro-synthesis — compiles the run's theories, economic models, and verification verdicts into the unified strategic alignment document (the run's primary deliverable) in outcomes/04_alignment. Use for the SYNTHESIZE phase, once at least one verified theory/economic model exists.
 ---
 
 **Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
@@ -16,7 +16,7 @@ run's verified output set; optionally the operator names which theories/models t
    `<eng>/research_body/04_quarantine/` (unresolved conflicts ride along as open risks).
 3. Invoke the Agent tool with `subagent_type: "synthesist"`, passing all of it.
 4. Write the synthesist's returned Markdown verbatim to
-   `<eng>/outcomes/alignment/alignment--<outcome-slug>--<YYYY-MM-DD>.md` using the Write tool.
+   `<eng>/outcomes/04_alignment/alignment--<outcome-slug>--<YYYY-MM-DD>.md` using the Write tool.
    (The gate hook validates `type: alignment` and the `## Execution Detail` section, and appends
    the `SYNTHESIZE` log line.)
 5. If the hook blocks the write, re-invoke the synthesist with the reason and rewrite.

@@ -1,5 +1,5 @@
 <!--
-Progressive Disclosure schema for SYNTHESIZE-phase output (outcomes/alignment/) — the run's
+Progressive Disclosure schema for SYNTHESIZE-phase output (outcomes/04_alignment/) — the run's
 primary deliverable. Frontmatter fields are load-bearing: the gate hook parses `type` and `status`
 literally, and requires a non-empty `## Execution Detail` section.
 -->

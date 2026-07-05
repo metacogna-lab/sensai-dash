@@ -38,8 +38,9 @@ operations/                  # THE WIKI + engagement-workspace pipeline state (s
         ├── goals/        # primary_directive, active_milestones, research_questions, audits/
         ├── research_body/# 00_inbox → 01_raw → 02_nodes → 03_archive; 04_quarantine (HITL
         │                 #   conflict queue); corpus_map.md
-        ├── outcomes/     # theories/ economic_models/ verification/ alignment/ broadcast/
-        │                 #   longitudinal/
+        ├── outcomes/     # 01_theories/ 02_economic_models/ 03_verification/ 04_alignment/
+        │                 #   05_broadcast/ (numbered = pipeline order) + longitudinal/ (unprefixed,
+        │                 #   cross-cutting — reads the others rather than sitting in their chain)
         └── telemetry/    # execution.log — flat append-only Work Block ledger (per tenant)
 agents/                   # (repo root) ACTIVE design inputs: PRD, Hooks spec, task ledger
 └── archive/              # consumed/processed design drafts (historical record)

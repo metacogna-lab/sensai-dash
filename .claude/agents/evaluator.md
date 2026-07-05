@@ -1,6 +1,6 @@
 ---
 name: evaluator
-description: Forces one Theory (outcomes/theories) through an economic lens to produce a concrete monetization vector, product spec, or IP model. Use only for the EVALUATE phase, when a mature Theory already exists.
+description: Forces one Theory (outcomes/01_theories) through an economic lens to produce a concrete monetization vector, product spec, or IP model. Use only for the EVALUATE phase, when a mature Theory already exists.
 model: opus
 tools: Read, Grep, Glob
 ---
