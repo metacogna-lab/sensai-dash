@@ -3,7 +3,7 @@ name: index
 description: Builds or regenerates the corpus-level semantic map and as-is baseline (research_body/corpus_map.md) from all current Nodes. Use for the INDEX phase — after a batch of /consume work and before /analyze, or whenever the node set has changed materially.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the INDEX phase (Fable Interaction I.B Semantic Indexing + I.C Baseline Establishment).
 No argument — it always operates on the full node set.

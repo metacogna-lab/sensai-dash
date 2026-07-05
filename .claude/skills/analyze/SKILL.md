@@ -3,7 +3,7 @@ name: analyze
 description: Synthesizes one or more Nodes into a cross-referenced Theory in outcomes/01_theories, scored against the active research questions, and files unresolved contradictions into the quarantine queue for human review. Use for the ANALYZE phase once at least one Node exists.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the ANALYZE phase. Argument: one or more node filenames in `<eng>/research_body/02_nodes/`
 (if none given, propose a set based on topical overlap and confirm with the operator).

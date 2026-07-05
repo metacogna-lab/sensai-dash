@@ -3,15 +3,19 @@ name: stress-test
 description: Systemic self-audit — stress-tests one output artifact (theory, economic model, or alignment doc) against the source Nodes, corpus map, and calibrated constraints, producing a PASS / PASS-WITH-NOTES / FAIL verdict in outcomes/03_verification. Use for the VERIFY phase, before an artifact is treated as final or fed to /synthesize or /broadcast.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the VERIFY phase (Fable Interaction V.C). Argument: an artifact filename from
 `<eng>/outcomes/01_theories/`, `<eng>/outcomes/02_economic_models/`, or `<eng>/outcomes/04_alignment/`.
 
 1. Verify the artifact exists. Assemble its evidence base: the nodes named in its `source:`
    frontmatter chain (follow `source:` recursively — econ model → theory → nodes),
-   `<eng>/research_body/corpus_map.md` if present, and `<eng>/goals/research_questions.md`.
-2. Invoke the Agent tool with `subagent_type: "verifier"`, passing the artifact and the evidence base.
+   `<eng>/research_body/corpus_map.md` if present, `<eng>/goals/research_questions.md`, and the
+   original archived raw source(s) for those nodes from `<eng>/research_body/03_archive/`
+   (each node's `source:` frontmatter names the raw filename it was archived under) — the
+   verifier needs these to spot-check claims against the pre-extraction text, not just the node.
+2. Invoke the Agent tool with `subagent_type: "verifier"`, passing the artifact and the full
+   evidence base including the archived originals.
 3. Write the verifier's returned Markdown verbatim to
    `<eng>/outcomes/03_verification/verify--<artifact-stem>.md` using the Write tool. (The gate hook
    validates `type: verification` and the `## Verdict` section, and appends the `VERIFY` log line.)

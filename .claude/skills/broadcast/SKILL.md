@@ -3,7 +3,7 @@ name: broadcast
 description: Translates one mature Economic Model or Alignment document into external-facing copy in outcomes/05_broadcast. Use for the BROADCAST phase once a verified model or alignment doc exists.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the BROADCAST phase. Argument: a filename in `<eng>/outcomes/02_economic_models/` or
 `<eng>/outcomes/04_alignment/`.
@@ -21,6 +21,15 @@ This is the BROADCAST phase. Argument: a filename in `<eng>/outcomes/02_economic
 6. Update `<eng>/INDEX.md`: the broadcast piece under outcomes.
 7. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID`, then commit:
    `git add -A && git commit -m "[BROADCAST] WB-<id>: <one-line summary of what was published>"`.
+8. **Human sign-off (mandatory — the third HITL point, alongside quarantine and FAIL verdicts):**
+   after writing the broadcast file, show its full content to the operator directly in your
+   response and explicitly ask them to confirm before treating the Work Block as done. This gate
+   exists because gate-hook validation only checks schema (frontmatter, non-empty body) — it
+   cannot judge whether externally-publishable copy is something the operator actually wants to
+   stand behind. Do not proceed to any external posting action (which is always separate and
+   manual regardless) without this confirmation, and do not silently skip asking just because the
+   content "looks fine."
 
 Broadcast copy is written to disk only — actually publishing anywhere external is always a separate,
-operator-approved action.
+operator-approved action, and even the file itself is not "done" until the operator has read and
+confirmed it per step 8.

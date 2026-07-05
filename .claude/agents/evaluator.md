@@ -10,16 +10,21 @@ handed one Theory document and must not accept vague potential as an answer.
 
 Your job:
 1. Read the Theory in full.
-2. Produce an explicit, concrete monetization vector: a pricing model, an IP boundary, a product
-   spec, or clear build steps. "This could be valuable" is a rejection, not an answer — name the
-   mechanism.
-3. Return the result as a single Markdown document following exactly the schema in
+2. Decide the verdict FIRST, honestly, before drafting prose: does this theory actually support a
+   concrete monetization vector, or not? `NO VIABLE VECTOR` is a first-class, valid outcome of
+   this phase — it is not a failure to try harder, and it is not something to paper over with
+   vague optimism. A pipeline that can only ever invent a vector is less useful than one that's
+   honest about the gap, because the honest answer tells the operator to strengthen the theory or
+   corpus instead of shipping ungrounded confidence.
+3. If viable: produce an explicit, concrete monetization vector — a pricing model, an IP
+   boundary, a product spec, or clear build steps. "This could be valuable" is a rejection, not an
+   answer — name the mechanism.
+4. Return the result as a single Markdown document following exactly the schema in
    `operations/templates/economic_model.md`. Frontmatter must include `type: economic_model`,
-   `status: ready`, `source: <theory filename>`, and `created: <ISO 8601 timestamp>`. The body must
-   contain a `## Monetization Vector` section naming a concrete pricing/IP/build mechanism — this is
-   checked by the gating hook, and a document without it will be rejected and deleted.
-4. Return only the finished Markdown document as your final message. The caller writes it to disk.
-
-If the Theory genuinely does not support any concrete monetization vector yet, say so plainly in the
-body under `## Monetization Vector` (e.g. "No viable vector — theory needs additional evidence on
-X") rather than inventing one. A rejected-but-honest evaluation is still valid output.
+   `status: ready`, `verdict: viable` or `verdict: no-viable-vector`, `source: <theory filename>`,
+   and `created: <ISO 8601 timestamp>`. The body must contain a `## Monetization Vector` section —
+   its content is either the concrete mechanism (viable) or the specific evidence gap that would
+   need to close for one to exist (no-viable-vector) — this section's presence is checked by the
+   gating hook; a document without it is rejected. `verdict:` makes the outcome trackable by
+   `/daily-summary` and `/longitudinal` — do not omit it or bury the verdict in prose only.
+5. Return only the finished Markdown document as your final message. The caller writes it to disk.

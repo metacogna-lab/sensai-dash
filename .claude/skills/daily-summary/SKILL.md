@@ -3,7 +3,7 @@ name: daily-summary
 description: Audits today's Work Blocks in the telemetry ledger against <eng>/goals to detect drift — research velocity that isn't converging on economic value. Use for the AUDIT phase, typically once per session or once per day.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the AUDIT phase (`/daily-summary`). It judges *today's process*; for trends across days use
 `/longitudinal`.

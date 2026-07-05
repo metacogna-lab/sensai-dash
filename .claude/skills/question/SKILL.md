@@ -3,7 +3,7 @@ name: question
 description: Deconstructs a stated strategic outcome into measurable, falsifiable research questions before any research corpus is processed. Use at the start of a new pipeline run, or when the operator gives a new strategic goal for an existing corpus.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the QUESTION phase. It must run before `/analyze` — the analyst refuses to synthesize a
 theory without `<eng>/goals/research_questions.md` present.

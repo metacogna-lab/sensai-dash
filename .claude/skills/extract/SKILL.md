@@ -3,7 +3,7 @@ name: extract
 description: Converts binary sources (PDFs primarily) staged in research_body/00_inbox into plain-text raw files in research_body/01_raw, ready for /consume. Use for the EXTRACT phase — the very first step when a source arrives as a PDF or other non-text format.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the EXTRACT phase. Argument: a filename in `<eng>/research_body/00_inbox/` (or "all" to
 process everything in the inbox).

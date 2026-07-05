@@ -26,6 +26,12 @@ the write lands in the target directory and the `PostToolUse` gate hook does not
 (`.claude/scripts/post_write_gate.sh` → `gate.sh`). A skill must never treat a `GATED` block as
 silent failure: read the reason from stderr, re-invoke the agent with that feedback, and retry.
 
+**Retry cap: two rewrite attempts, then stop.** If the same artifact still fails the gate on the
+third try, the problem is almost certainly a template/agent mismatch, not a fixable prompt
+variance — stop retrying, fix the mismatch (see `operations/guides/01_EDITING.md`), and only then
+retry once more. Burning further model calls against the same broken contract wastes tokens
+without converging.
+
 ## 3. Logging & Commit
 
 Do not append to `operations/telemetry/execution.log` by hand from within a skill's own reasoning —

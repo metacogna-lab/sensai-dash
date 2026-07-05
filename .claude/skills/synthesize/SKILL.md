@@ -3,7 +3,7 @@ name: synthesize
 description: Macro-synthesis — compiles the run's theories, economic models, and verification verdicts into the unified strategic alignment document (the run's primary deliverable) in outcomes/04_alignment. Use for the SYNTHESIZE phase, once at least one verified theory/economic model exists.
 ---
 
-**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are deleted by the gate hook as context bleed.
+**Engagement scope:** resolve the active engagement first — `ENG="operations/engagements/$(cat operations/.active_engagement)"`; every `<eng>/...` path below means `$ENG/...`. If the pointer file is missing, stop and tell the operator to run `/switch <name>` or `/init-engagement <name>`. Cross-engagement writes are quarantined (to `operations/.rejected/`) by the gate hook as context bleed.
 
 This is the SYNTHESIZE phase (Fable Interaction V.A + V.B). No argument needed — it operates on the
 run's verified output set; optionally the operator names which theories/models to include.

@@ -104,6 +104,16 @@ if "$SCRIPT_DIR/gate.sh" "$FILE_PATH" "$TYPE" 2>"$REASON_FILE"; then
         echo "gate hook: artifact $TARGET passed the gate but the ledger append FAILED — fix operations/engagements/$ENGAGEMENT/telemetry/ and log this Work Block manually via append_log.sh." >&2
         exit 2
     fi
+    # INDEX-drift reminder (non-blocking): a gated write is one half of a Work Block; the
+    # skill's INDEX.md update is the other half. If the engagement's INDEX.md hasn't been
+    # touched in the last 5 minutes, this artifact is likely invisible to downstream agents.
+    ENG_INDEX="$ENG_ROOT/$ENGAGEMENT/INDEX.md"
+    if [ -f "$ENG_INDEX" ]; then
+        INDEX_AGE=$(( $(date +%s) - $(stat -f %m "$ENG_INDEX" 2>/dev/null || stat -c %Y "$ENG_INDEX" 2>/dev/null || echo 0) ))
+        if [ "$INDEX_AGE" -gt 300 ]; then
+            echo "Reminder: $TARGET was gated SUCCESS but $ENG_INDEX hasn't been updated in ${INDEX_AGE}s. Update it as part of this Work Block — an artifact not reachable from INDEX.md is invisible to downstream agents." >&2
+        fi
+    fi
     exit 0
 else
     REASON=$(cat "$REASON_FILE")

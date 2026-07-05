@@ -23,8 +23,9 @@ at a time, named by the `operations/.active_engagement` pointer:
 - `/init-engagement <name>` — scaffold a new isolated engagement and switch to it.
 - `/switch <name>` — change the active engagement (primes context from its `INDEX.md`).
 - **Context-bleed enforcement is mechanical, not honor-system:** the gate hook derives the owning
-  engagement from every gated write path and deletes + blocks any write that targets a non-active
-  engagement, and the engagement segment is sanitized against path traversal (`..`).
+  engagement from every gated write path and quarantines (to `.rejected/`) + blocks any write that
+  targets a non-active engagement, and the engagement segment is sanitized against path
+  traversal (`..`).
 
 All pipeline commands below operate on the active engagement; `<eng>` means
 `operations/engagements/$(cat operations/.active_engagement)`.
@@ -33,7 +34,10 @@ All pipeline commands below operate on the active engagement; `<eng>` means
 
 **The golden path for a new research run:**
 
-0. **Pick the tenant.** `/switch <name>` (or `/init-engagement <name>` for a new domain). Never
+0. **`/bootstrap`, always first in a fresh checkout or after any Claude Code/dependency upgrade.**
+   It self-tests the enforcement hook (not just "does the file exist" — it writes a deliberately
+   invalid artifact and confirms the gate actually blocks it) before you trust it with real work.
+   Then pick the tenant: `/switch <name>` (or `/init-engagement <name>` for a new domain). Never
    mix domains in one engagement — isolation is the point.
 1. **Stage sources.** Drop PDFs/binaries into `<eng>/research_body/00_inbox/`, plain text into
    `<eng>/research_body/01_raw/`.
