@@ -1,8 +1,16 @@
 #!/bin/bash
 # Sensai Compilar: PostToolUse hook for Write|Edit — the deterministic gate.
-# Hardened per autoplan review (F1, F2, E9, F6, F9):
+# Hardened per autoplan review (F1, F2, E9, F6, F9) + bats-suite discovery:
 #   - fail CLOSED: unparseable payload, missing python3, or missing file_path blocks the write
 #   - paths are canonicalized and anchored to THIS repo's engagements root before any action
+#   - ENG_ROOT itself is canonicalized too (bats caught this): on macOS $CLAUDE_PROJECT_DIR
+#     can be reached via a symlink (e.g. /var/folders -> /private/var/folders under a temp
+#     sandbox, but the same class of issue applies to any symlinked ancestor in real use).
+#     FILE_PATH is realpath'd by the python3 step below; comparing that against a
+#     non-canonicalized ENG_ROOT silently fails the prefix match and every gated write
+#     becomes a no-op — fail-OPEN, the exact failure class this hook exists to prevent.
+#     Canonicalizing ENG_ROOT/POINTER/REJECT_DIR here keeps both sides of every comparison
+#     on the same footing.
 #   - rejected files are QUARANTINED to operations/.rejected/ (recoverable), never rm'd
 #   - gate reason captured via mktemp, not a fixed /tmp path
 # On pass: appends the Work Block ledger line to the owning engagement's execution.log.
@@ -10,6 +18,7 @@
 set -uo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+PROJECT_DIR="$(cd "$PROJECT_DIR" 2>/dev/null && pwd -P || echo "$PROJECT_DIR")"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POINTER="$PROJECT_DIR/operations/.active_engagement"
 ENG_ROOT="$PROJECT_DIR/operations/engagements"
