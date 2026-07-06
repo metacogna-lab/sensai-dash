@@ -23,3 +23,4 @@ node_modules/
 
 # Git worktrees created under .claude/ are local scratch, never repo content.
 .claude/worktrees/
+.sensai/
