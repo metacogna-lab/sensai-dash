@@ -41,7 +41,7 @@ export default function RootLayout({
           {/* CommandPalette is inside DrawerProvider so it can call useDrawer() */}
           <CommandPalette />
           <GlassNav />
-          <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-6 sm:px-6 md:pb-10 md:pt-24">
+          <main className="mx-auto w-full max-w-7xl px-6 pb-28 pt-8 sm:px-8 md:pb-12 md:pt-28 lg:px-10 lg:pt-32">
             {children}
           </main>
         </DrawerProvider>

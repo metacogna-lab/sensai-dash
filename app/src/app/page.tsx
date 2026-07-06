@@ -15,48 +15,55 @@ export default async function HomePage() {
   const activeEngagement = engagements.find((e) => e.active);
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-1">
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
+    <div className="space-y-20">
+      <header className="space-y-2">
+        <h1 className="flex items-center gap-3 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
           AgenticOS Terminal
         </h1>
-        <p className="text-sm text-ink-dim">
+        <p className="text-xl text-ink-dim max-w-2xl leading-relaxed">
           Read-only observability across the Sensai Compilar flat-file ecosystem.
         </p>
       </header>
 
       {activeEngagement && (
-        <aside className="flex flex-wrap items-center gap-3 rounded-lg border border-emerald/20 bg-emerald/5 px-4 py-2.5 font-mono text-xs">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald shadow-[0_0_6px_var(--color-emerald)]" />
-          <span className="text-ink-dim">active tenant</span>
-          <span className="font-semibold text-emerald">{activeEngagement.id}</span>
+        <aside className="flex flex-col gap-4 rounded-lg border border-emerald/20 bg-emerald/5 px-8 py-6 font-mono">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="h-3 w-3 animate-pulse rounded-full bg-emerald shadow-[0_0_8px_var(--color-emerald)]" />
+            <span className="text-base text-ink-dim">active tenant</span>
+            <span className="text-2xl font-bold text-emerald">{activeEngagement.id}</span>
+          </div>
           {activeEngagement.focus && (
-            <>
-              <span className="text-ink-dim/40">·</span>
-              <span className="text-ink-dim">{activeEngagement.focus}</span>
-            </>
+            <div className="text-lg text-ink-dim">
+              <span className="text-ink-dim/60">focus: </span>
+              <span className="text-ink">{activeEngagement.focus}</span>
+            </div>
           )}
           {activeEngagement.recentlyActive && (
-            <>
-              <span className="text-ink-dim/40">·</span>
-              <span className="text-emerald/70">recently active</span>
-            </>
+            <div className="text-base text-emerald/80">
+              ✓ recently active
+            </div>
           )}
         </aside>
       )}
 
-      <section aria-label="Global telemetry">
+      <section aria-label="Global telemetry" className="space-y-4">
+        <h2 className="text-2xl font-semibold text-ink tracking-tight md:text-3xl">
+          Pipeline Funnel
+        </h2>
         <GlobalTelemetry telemetry={telemetry} />
       </section>
 
-      <section aria-label="Engagements" className="space-y-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-ink-dim">
+      <section aria-label="Engagements" className="space-y-6">
+        <h2 className="text-2xl font-semibold text-ink tracking-tight md:text-3xl">
           Active Engagements
         </h2>
         <EngagementGrid engagements={engagements} />
       </section>
 
-      <section aria-label="Telemetry stream">
+      <section aria-label="Telemetry stream" className="space-y-6">
+        <h2 className="text-2xl font-semibold text-ink tracking-tight md:text-3xl">
+          Telemetry Stream
+        </h2>
         <LogStreamer engagements={engagements.map((e) => e.id)} />
       </section>
     </div>

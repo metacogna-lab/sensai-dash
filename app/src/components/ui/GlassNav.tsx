@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Activity, FolderTree, Sparkles } from "lucide-react";
+import { Activity, FolderTree, Blocks, Sparkles } from "lucide-react";
 import type { GlobalTelemetry, EngagementSummary } from "@/lib/types";
 
 const LINKS = [
   { href: "/", label: "Terminal", icon: Activity },
   { href: "/engagements", label: "Explorer", icon: FolderTree },
+  { href: "/plugins", label: "Plugins", icon: Blocks },
   { href: "/admin", label: "Forge", icon: Sparkles },
 ] as const;
 
@@ -57,7 +58,7 @@ export function GlassNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-emerald/30" />
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
           className="hidden items-center gap-2 py-4 font-mono text-sm tracking-tight md:flex"

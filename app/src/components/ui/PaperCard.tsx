@@ -24,7 +24,7 @@ export function PaperCard({
   return (
     <Component
       className={cn(
-        "relative rounded-lg border bg-paper p-4 shadow-none transition-opacity duration-0",
+        "relative rounded-lg border bg-paper p-6 md:p-8 shadow-none transition-opacity duration-0",
         "border-edge",
         dim ? "opacity-60 hover:opacity-100 focus-within:opacity-100" : "opacity-100",
         active && "border-emerald/60 shadow-[0_0_0_1px_var(--color-emerald)]",

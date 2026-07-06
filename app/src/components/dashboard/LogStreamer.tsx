@@ -27,20 +27,20 @@ function PhaseFilter({
   toggle: (phase: string) => void;
 }) {
   return (
-    <details className="mb-2">
-      <summary className="cursor-pointer select-none font-mono text-xs text-ink-dim hover:text-ink">
+    <details className="mb-4">
+      <summary className="cursor-pointer select-none font-mono text-base text-ink-dim hover:text-ink font-semibold">
         phases ▾
       </summary>
-      <div className="mt-1 flex flex-wrap gap-2 font-mono text-[10px]">
+      <div className="mt-3 flex flex-wrap gap-3 font-mono text-base">
         {ALL_PHASES.map((phase) => (
-          <label key={phase} className="flex cursor-pointer items-center gap-1">
+          <label key={phase} className="flex cursor-pointer items-center gap-2">
             <input
               type="checkbox"
               checked={enabled.has(phase)}
               onChange={() => toggle(phase)}
-              className="accent-emerald"
+              className="accent-emerald w-4 h-4"
             />
-            {phase}
+            <span>{phase}</span>
           </label>
         ))}
       </div>
@@ -55,14 +55,14 @@ function LogRow({ row }: { row: TaggedRow }) {
   const targetPath = resolveTargetPath(row.engagement, row.phase, row.target);
 
   return (
-    <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+    <div className="flex flex-wrap gap-x-3 gap-y-1 py-1.5">
       <span className="text-ink-dim">{row.timestamp}</span>
-      <span className="text-emerald/70">[{row.engagement}]</span>
-      <span className="flex items-center gap-1 text-ink">
-        {Icon && <Icon className="inline h-3 w-3" />}
+      <span className="text-emerald/70 font-mono font-semibold">[{row.engagement}]</span>
+      <span className="flex items-center gap-1.5 text-ink font-semibold">
+        {Icon && <Icon className="inline h-4 w-4" />}
         {row.phase}
       </span>
-      <span className="text-ink-dim">{row.workBlock}</span>
+      <span className="text-ink-dim font-mono">{row.workBlock}</span>
       {targetPath ? (
         <button
           onClick={() => openFile(targetPath)}
@@ -74,7 +74,7 @@ function LogRow({ row }: { row: TaggedRow }) {
       ) : (
         <span className="truncate text-ink-dim">{row.target}</span>
       )}
-      <span className={cn("font-semibold", statusClass)}>{row.status}</span>
+      <span className={cn("font-bold text-base", statusClass)}>{row.status}</span>
     </div>
   );
 }
@@ -117,22 +117,22 @@ export function LogStreamer({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex min-h-[44px] w-full items-center justify-between px-4 py-2.5 text-left"
+        className="flex min-h-16 w-full items-center justify-between px-6 py-4 text-left hover:bg-paper-2/30 transition-colors"
       >
-        <span className="flex items-center gap-2 text-sm font-medium text-ink">
-          <Terminal className="h-4 w-4 text-emerald" />
+        <span className="flex items-center gap-3 text-lg font-semibold text-ink">
+          <Terminal className="h-5 w-5 text-emerald" />
           Live Log Stream
-          <span className="font-mono text-xs text-ink-dim">({visible.length})</span>
+          <span className="font-mono text-base text-ink-dim">({visible.length})</span>
         </span>
-        <ChevronDown className={cn("h-4 w-4 text-ink-dim transition-transform", !open && "-rotate-90")} />
+        <ChevronDown className={cn("h-5 w-5 text-ink-dim transition-transform", !open && "-rotate-90")} />
       </button>
 
       {open && (
-        <div className="border-t border-edge px-4 py-3 font-mono text-xs leading-6">
+        <div className="border-t border-edge px-6 py-4 font-mono text-base leading-7">
           <PhaseFilter enabled={enabledPhases} toggle={togglePhase} />
-          <div className="max-h-72 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto space-y-0.5">
             {visible.length === 0 ? (
-              <p className="text-ink-dim">no telemetry yet…</p>
+              <p className="text-ink-dim py-4">no telemetry yet…</p>
             ) : (
               visible.map((r, i) => (
                 <LogRow key={`${r.engagement}-${r.workBlock}-${i}`} row={r} />
