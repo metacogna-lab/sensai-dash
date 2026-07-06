@@ -32,7 +32,7 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # Only ship what Next.js standalone outputs + public + static assets.
-COPY --from=builder /build/public ./public
+# Public directory is optional (may not exist for minimal Next.js apps).
 COPY --from=builder /build/.next/standalone ./
 COPY --from=builder /build/.next/static ./.next/static
 
