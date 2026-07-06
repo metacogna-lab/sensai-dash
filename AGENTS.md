@@ -16,6 +16,7 @@ All commands are `/` skills. The operator runs these in Claude Code at the repo 
 | `/consume <file>` | CONSUME | consumer (haiku) | `<eng>/research_body/02_nodes/` |
 | `/index` | INDEX | indexer (sonnet) | `<eng>/research_body/corpus_map.md` |
 | `/analyze <nodes...>` | ANALYZE | analyst (sonnet) | `<eng>/outcomes/01_theories/` |
+| `/resolve-conflict <file>` | QUARANTINE | — (operator HITL) | `<eng>/research_body/04_quarantine/` → `03_archive/` |
 | `/evaluate <theory>` | EVALUATE | evaluator (opus) | `<eng>/outcomes/02_economic_models/` |
 | `/stress-test <artifact>` | VERIFY | verifier (opus) | `<eng>/outcomes/03_verification/` |
 | `/synthesize` | SYNTHESIZE | synthesist (fable) | `<eng>/outcomes/04_alignment/` |

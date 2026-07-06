@@ -16,7 +16,18 @@ teardown() { teardown_sandbox; }
     [ "$status" -eq 0 ]
     [ -f "$TARGET" ]
     run tail -1 "$ENG_DIR/telemetry/execution.log"
-    [[ "$output" == *"CONSUME | WB-001 | node--a.md | SUCCESS" ]]
+    [[ "$output" == *"CONSUME | WB-001 | node--a.md | SUCCESS | -" ]]
+}
+
+@test "post_write_gate: a passing Edit logs EDIT, not SUCCESS (F12)" {
+    TARGET="$ENG_DIR/research_body/02_nodes/node--edited.md"
+    write_valid_node "$TARGET"
+    PAYLOAD=$(hook_payload "$TARGET" Edit)
+    run bash -c "echo '$PAYLOAD' | '$SCRIPTS/post_write_gate.sh'"
+    [ "$status" -eq 0 ]
+    [ -f "$TARGET" ]
+    run tail -1 "$ENG_DIR/telemetry/execution.log"
+    [[ "$output" == *"CONSUME | WB-001 | node--edited.md | EDIT | -" ]]
 }
 
 @test "post_write_gate: a successful Work Block is committed into the engagement's OWN repo" {
@@ -49,7 +60,7 @@ EOF
     [ ! -f "$TARGET" ]
     ls "$ENG_DIR/.rejected/" | grep -q "node--bad.md"
     run tail -1 "$ENG_DIR/telemetry/execution.log"
-    [[ "$output" == *"CONSUME | WB-001 | node--bad.md | GATED" ]]
+    [[ "$output" == *"CONSUME | WB-001 | node--bad.md | GATED | -" ]]
 }
 
 @test "post_write_gate: a bare file directly under engagements/ (no subdirectory) is a no-op" {

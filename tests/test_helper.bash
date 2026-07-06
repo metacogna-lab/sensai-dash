@@ -19,7 +19,7 @@ setup_sandbox() {
              "$ENG_DIR"/telemetry
     mkdir -p "$CLAUDE_PROJECT_DIR/operations"
     echo "$ENG" > "$CLAUDE_PROJECT_DIR/operations/.active_engagement"
-    echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" > "$ENG_DIR/telemetry/execution.log"
+    echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS | COST" > "$ENG_DIR/telemetry/execution.log"
     printf '# engagement index\n' > "$ENG_DIR/INDEX.md"
     init_engagement_repo "$ENG_DIR"
 }
@@ -41,8 +41,9 @@ teardown_sandbox() {
 }
 
 # Build a PostToolUse-shaped JSON payload naming the given absolute file path.
+# Optional second arg overrides tool_name (default Write; pass Edit to exercise F12).
 hook_payload() {
-    python3 -c "import json,sys; print(json.dumps({'tool_name':'Write','tool_input':{'file_path': sys.argv[1]}}))" "$1"
+    python3 -c "import json,sys; print(json.dumps({'tool_name': sys.argv[2] if len(sys.argv)>2 else 'Write','tool_input':{'file_path': sys.argv[1]}}))" "$1" "${2:-Write}"
 }
 
 write_valid_node() {

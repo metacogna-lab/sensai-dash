@@ -13,7 +13,7 @@ colliding with Claude Code's built-in `/init`.)
    ```bash
    ENG="engagements/<name>"
    mkdir -p "$ENG"/{goals/audits,research_body/{00_inbox,01_raw,02_nodes,03_archive,04_quarantine},outcomes/{01_theories,02_economic_models,03_verification,longitudinal,04_alignment,05_broadcast},telemetry}
-   echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" > "$ENG/telemetry/execution.log"
+   echo "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS | COST" > "$ENG/telemetry/execution.log"
    ```
 4. **Switch FIRST**: write `<name>` to `operations/.active_engagement`. This must precede any
    Write-tool seed file — the gate hook quarantines writes into non-active engagements as context

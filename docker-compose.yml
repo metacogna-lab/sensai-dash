@@ -1,0 +1,25 @@
+services:
+  studio:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: sensai-studio:latest
+    container_name: sensai-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount the harness root (this directory) read-only into /harness so the
+      # dashboard can access engagements/, operations/, etc. at runtime.
+      - .:/harness:ro
+    environment:
+      # Tell sandbox.ts where to find the harness root inside the container.
+      SENSAI_ROOT: /harness
+      NODE_ENV: production
+      PORT: "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/engagements || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

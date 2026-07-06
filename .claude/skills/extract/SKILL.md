@@ -22,6 +22,10 @@ process everything in the inbox).
    output file in `01_raw/` is non-empty and contains real prose (not extraction junk). If it
    failed, delete the output and tell the operator the source needs manual handling — then still
    do step 6 below with `GATED` so the failure is logged.
+   **Size guard (F15):** also check the output size (`wc -c`/`wc -w`). A large source (e.g. a
+   several-hundred-page PDF) produces a raw file that will later overflow `/consume`'s single agent
+   call. If it is over ~200 KB / ~40k words, split it at natural boundaries into `<stem>--part-01.txt`,
+   `--part-02.txt`, … in `01_raw/` now, so each part consumes into its own node downstream.
 4. Move the source binary to `<eng>/research_body/03_archive/` so it is never re-extracted.
 5. Update the `research_body` section of `<eng>/INDEX.md` (new raw file listed, inbox count).
 6. **Log and commit (manual — this phase writes via Bash, which the Write-hook cannot see): this

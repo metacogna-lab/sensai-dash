@@ -494,12 +494,12 @@ research to strictness."
 model in 3 minutes" — the pipeline's whole thesis, experienced before any investment.
 
 ### DX Implementation Checklist
-- [ ] D-1 demo corpus + README "First run" block (P2) — the single highest-leverage DX item
-- [ ] /verify + /audit aliases (P2) · /consume all + WB-ID echoed by append_log (P2)
-- [ ] Documented override path with GATED-OVERRIDE ledger line (P2)
-- [ ] /bootstrap: python3 check + hook self-test + route as README step 0 (P2)
-- [ ] Pointer-missing → quarantine-not-delete (folds into F2 .rejected/ mechanism) (P1 w/ F2)
-- [ ] Window grammar + exact template path in gate messages (P3)
+- [x] D-1 demo corpus + README "First run" block (P2) — the single highest-leverage DX item
+- [x] /verify + /audit aliases (P2) · /consume all + WB-ID echoed by append_log (P2)
+- [x] Documented override path with GATED-OVERRIDE ledger line (P2)
+- [x] /bootstrap: python3 check + hook self-test + route as README step 0 (P2)
+- [x] Pointer-missing → quarantine-not-delete (folds into F2 .rejected/ mechanism) (P1 w/ F2)
+- [x] Window grammar + exact template path in gate messages (P3)
 
 ### Decision Audit Trail (appended)
 | # | Phase | Decision | Classification | Principle | Rationale | Rejected |
@@ -524,4 +524,26 @@ model in 3 minutes" — the pipeline's whole thesis, experienced before any inve
 **VERDICT:** CEO + ENG + DX reviewed, APPROVED AS-IS at final gate (D2→A, 2026-07-05). P1 fixes
 (F1, F2, E9, F4, G1/U1) implemented and verified same session; per U2 the harness is now FROZEN
 except the approved P2/P3 checklist until engagement #1 runs a real corpus end-to-end.
+NO UNRESOLVED DECISIONS
+
+---
+
+# Outstanding-Work Completion (2026-07-06)
+
+Cleared the remaining approved P2/P3 items — the last of the "FROZEN except the approved checklist"
+backlog. Everything else from the reviews had already shipped across WB-001..008 (per-engagement
+git, demo corpus, bats suite, /verify + /audit aliases, /consume all, GATED-OVERRIDE, bootstrap
+self-test, F16 relabel). Landed this session, all 36 bats cases green:
+
+| Item | Decision | Resolution |
+|---|---|---|
+| **E2** /resolve-conflict skill | #7 | New `.claude/skills/resolve-conflict/SKILL.md` — services the quarantine HITL queue: operator states the decision, skill Edits the conflict in place (`status: resolved`/`deferred`, `## Resolution` section — gated + logged `QUARANTINE EDIT` automatically), archives to `03_archive/`, updates INDEX. Wired into the conflict template, analyze skill, and AGENTS.md command table. |
+| **E4** cost column in ledger | #15 | `append_log.sh` ledger schema is now `… | STATUS | COST`; COST is a reserved placeholder (`-`) since the hook has no token data at call time — the format change is free pre-first-run so token accounting can backfill without a second migration. Header updated in append_log.sh, init-engagement, bootstrap, README, test_helper. |
+| **F8** WB-ID mint race | #20 | mkdir-based lock (POSIX-atomic; macOS has no flock) around the line-count read + append in `append_log.sh`; best-effort with a 10s timeout so it never deadlocks. New bats cases for lock release + concurrent-writer uniqueness. |
+| **F12** EDIT ledger status | #22 | `post_write_gate.sh` extracts `tool_name`; a passing Edit of an existing artifact logs `EDIT` (not `SUCCESS`) so revisions don't inflate the SUCCESS count the audit/historian funnel reads. |
+| **F15** size guards | #22 | `/extract` and `/consume` now size-check the raw output (`~200 KB`/`~40k words`) and split oversized sources at natural boundaries into `--part-NN` files, one node each, so a several-hundred-page PDF can't overflow the consumer's single agent call. |
+
+Verified already-done during reconciliation (checked, not re-implemented): F1/F5/E9 fail-closed +
+realpath anchor, F2 quarantine-not-delete, F6 traversal, F9 mktemp, E1 INDEX-drift reminder,
+E5/E6/E7/E10, longitudinal window grammar, gate-reject messages citing `operations/templates/$TPL`.
 NO UNRESOLVED DECISIONS

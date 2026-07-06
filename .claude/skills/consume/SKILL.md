@@ -17,7 +17,13 @@ one-line summary (N consumed) and recommend `/index`.
 
 1. Verify the target file exists in `<eng>/research_body/01_raw/`. If the operator pointed at a
    PDF or the inbox, route them to `/extract` first.
-2. Read the raw file's full content.
+2. Read the raw file's full content. **Size guard (F15):** first check its size (`wc -c`/`wc -w`). A
+   node is one agent call, so a very large source (rule of thumb: `> ~200 KB` or `> ~40k words`) risks
+   overflowing the consumer's context and silently truncating the extraction. If it is over that, split
+   it into coherent sections first — write `<stem>--part-01.txt`, `--part-02.txt`, … into `01_raw/` at
+   natural boundaries (chapters/sections, never mid-argument), archive the oversized original, and
+   consume each part as its own node. Note the split in your report so the operator knows one source
+   became N nodes.
 3. Invoke the Agent tool with `subagent_type: "consumer"`, passing the raw content and the source
    filename. Do not pre-summarize the content yourself — hand it over in full so the consumer does
    the extraction.

@@ -9,4 +9,17 @@
 # anyone browsing the harness repo understands why the directory looks empty here.
 engagements/*
 !engagements/README.md
-agents/*
+
+# --- Next.js dashboard (app/) build artifacts ---
+# The dashboard lives in app/ as its own bun project with its own app/.gitignore.
+# Anything Next generates at the HARNESS repo root is a stray from accidentally
+# running `next` outside app/ — never track it here.
+.next/
+next-env.d.ts
+/tsconfig.json
+*.tsbuildinfo
+node_modules/
+*.log
+
+# Git worktrees created under .claude/ are local scratch, never repo content.
+.claude/worktrees/

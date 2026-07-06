@@ -118,7 +118,9 @@ API keys, no router scripts.
 ## Logging & Work Blocks
 
 Every gated write appends one dense line to `<eng>/telemetry/execution.log`
-(`TIMESTAMP | PHASE | WB-ID | TARGET | STATUS` where STATUS ∈ SUCCESS/GATED/FAIL/GATED-OVERRIDE),
+(`TIMESTAMP | PHASE | WB-ID | TARGET | STATUS | COST` where STATUS ∈
+SUCCESS/EDIT/GATED/FAIL/GATED-OVERRIDE — EDIT marks a revision of an existing artifact so it
+doesn't inflate the SUCCESS count — and COST is a reserved column, `-` until token accounting lands),
 written by `.claude/scripts/append_log.sh` — never by hand. The Write-tool hook and `/extract`'s
 Bash path both call this same script, which is also where the commit happens: **one skill
 invocation = one Work Block = one automatic commit `[PHASE] WB-<id>: <target> (<status>)`, made

@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   // so server code must use the Node.js runtime with native fs. Route handlers pin
   // `runtime = 'nodejs'` individually; nothing here is edge-bound.
   reactStrictMode: true,
+  // Standalone output bundles server.js + all deps into .next/standalone so the
+  // Docker image does not need node_modules at runtime.
+  output: "standalone",
 };
 
 export default nextConfig;

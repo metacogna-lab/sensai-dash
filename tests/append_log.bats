@@ -11,7 +11,7 @@ teardown() { teardown_sandbox; }
     [ "$status" -eq 0 ]
     [[ "$output" == "WB-001" ]]
     run tail -1 "$ENG_DIR/telemetry/execution.log"
-    [[ "$output" == *"CONSUME | WB-001 | node--a.md | SUCCESS" ]]
+    [[ "$output" == *"CONSUME | WB-001 | node--a.md | SUCCESS | -" ]]
 }
 
 @test "append_log.sh: second call increments to WB-002" {
@@ -40,7 +40,40 @@ teardown() { teardown_sandbox; }
     rm -f "$ENG_DIR/telemetry/execution.log"
     "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$ENG" >/dev/null
     run head -1 "$ENG_DIR/telemetry/execution.log"
-    [[ "$output" == "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS" ]]
+    [[ "$output" == "TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS | COST" ]]
+}
+
+@test "append_log.sh: cost column defaults to '-' and records an explicit value when given" {
+    "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$ENG" >/dev/null
+    run tail -1 "$ENG_DIR/telemetry/execution.log"
+    [[ "$output" == *"| SUCCESS | -" ]]
+    "$SCRIPTS/append_log.sh" EVALUATE "model--b.md" SUCCESS "$ENG" "0.42" >/dev/null
+    run tail -1 "$ENG_DIR/telemetry/execution.log"
+    [[ "$output" == *"| SUCCESS | 0.42" ]]
+}
+
+@test "append_log.sh: EDIT status is recorded verbatim (F12 revision marker)" {
+    run "$SCRIPTS/append_log.sh" ANALYZE "theory--b.md" EDIT "$ENG"
+    [ "$status" -eq 0 ]
+    run tail -1 "$ENG_DIR/telemetry/execution.log"
+    [[ "$output" == *"ANALYZE | WB-001 | theory--b.md | EDIT | -" ]]
+}
+
+@test "append_log.sh: WB-ID lock is released (no .wb.lock left behind)" {
+    "$SCRIPTS/append_log.sh" CONSUME "node--a.md" SUCCESS "$ENG" >/dev/null
+    [ ! -e "$ENG_DIR/telemetry/.wb.lock" ]
+}
+
+@test "append_log.sh: concurrent writers mint distinct WB-IDs (F8 lock)" {
+    "$SCRIPTS/append_log.sh" CONSUME "node--1.md" SUCCESS "$ENG" >/dev/null &
+    "$SCRIPTS/append_log.sh" CONSUME "node--2.md" SUCCESS "$ENG" >/dev/null &
+    "$SCRIPTS/append_log.sh" CONSUME "node--3.md" SUCCESS "$ENG" >/dev/null &
+    wait
+    # Three appends over the header line → 4 lines, and the three minted WB-IDs are unique.
+    run bash -c "grep -c '^[0-9]' '$ENG_DIR/telemetry/execution.log'"
+    [ "$output" -eq 3 ]
+    run bash -c "cut -d'|' -f3 '$ENG_DIR/telemetry/execution.log' | grep WB | sort -u | wc -l | tr -d ' '"
+    [ "$output" -eq 3 ]
 }
 
 @test "append_log.sh: commits the Work Block into the engagement's own repo" {

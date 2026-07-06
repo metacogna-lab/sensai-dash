@@ -36,23 +36,28 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 PAYLOAD=$(cat)
+# Emit two lines: tool_name, then the realpath'd file_path (F12 needs the tool name to tell
+# a first-write SUCCESS from an Edit revision). A parse failure emits the single-line sentinel.
 PARSED=$(printf '%s' "$PAYLOAD" | python3 -c '
 import json, sys, os
 try:
     d = json.load(sys.stdin)
 except Exception:
     print("__PARSE_ERROR__"); sys.exit(0)
+tn = d.get("tool_name", "")
 fp = d.get("tool_input", {}).get("file_path", "")
 if fp:
     fp = os.path.realpath(fp)
+print(tn)
 print(fp)
 ')
 
-if [ "$PARSED" = "__PARSE_ERROR__" ]; then
+if [ "$(printf '%s\n' "$PARSED" | sed -n 1p)" = "__PARSE_ERROR__" ]; then
     echo "gate hook: unparseable hook payload — enforcement would be OFF, blocking the write (fail-closed). Run /bootstrap to self-test the hook." >&2
     exit 2
 fi
-FILE_PATH="$PARSED"
+TOOL_NAME=$(printf '%s\n' "$PARSED" | sed -n 1p)
+FILE_PATH=$(printf '%s\n' "$PARSED" | sed -n 2p)
 if [ -z "$FILE_PATH" ]; then
     echo "gate hook: payload carried no file_path for a Write/Edit — blocking (fail-closed)." >&2
     exit 2
@@ -134,7 +139,11 @@ REASON_FILE=$(mktemp "${TMPDIR:-/tmp}/sensai_gate.XXXXXX")
 trap 'rm -f "$REASON_FILE"' EXIT
 
 if "$SCRIPT_DIR/gate.sh" "$FILE_PATH" "$TYPE" 2>"$REASON_FILE"; then
-    if ! "$SCRIPT_DIR/append_log.sh" "$PHASE" "$TARGET" "SUCCESS" "$ENGAGEMENT" >/dev/null; then
+    # F12: a passing Edit of an existing artifact logs EDIT, not SUCCESS, so revisions
+    # don't inflate the SUCCESS count the audit/historian funnel reads.
+    GATE_STATUS="SUCCESS"
+    [ "$TOOL_NAME" = "Edit" ] && GATE_STATUS="EDIT"
+    if ! "$SCRIPT_DIR/append_log.sh" "$PHASE" "$TARGET" "$GATE_STATUS" "$ENGAGEMENT" >/dev/null; then
         echo "gate hook: artifact $TARGET passed the gate but the ledger append FAILED — fix engagements/$ENGAGEMENT/telemetry/ and log this Work Block manually via append_log.sh." >&2
         exit 2
     fi
@@ -145,7 +154,7 @@ if "$SCRIPT_DIR/gate.sh" "$FILE_PATH" "$TYPE" 2>"$REASON_FILE"; then
     if [ -f "$ENG_INDEX" ]; then
         INDEX_AGE=$(( $(date +%s) - $(stat -f %m "$ENG_INDEX" 2>/dev/null || stat -c %Y "$ENG_INDEX" 2>/dev/null || echo 0) ))
         if [ "$INDEX_AGE" -gt 300 ]; then
-            echo "Reminder: $TARGET was gated SUCCESS but $ENG_INDEX hasn't been updated in ${INDEX_AGE}s. Update it as part of this Work Block — an artifact not reachable from INDEX.md is invisible to downstream agents." >&2
+            echo "Reminder: $TARGET was gated ${GATE_STATUS} but $ENG_INDEX hasn't been updated in ${INDEX_AGE}s. Update it as part of this Work Block — an artifact not reachable from INDEX.md is invisible to downstream agents." >&2
         fi
     fi
     exit 0

@@ -22,7 +22,8 @@ This is the ANALYZE phase. Argument: one or more node filenames in `<eng>/resear
    non-empty, write each conflict to `<eng>/research_body/04_quarantine/conflict--<slug>.md`
    following `operations/templates/conflict.md` (`type: conflict`, `status: review-required`). These are
    human-in-the-loop review items — the pipeline never resolves them autonomously. (Each write is
-   gated and logged as `QUARANTINE` automatically.)
+   gated and logged as `QUARANTINE` automatically.) The operator clears them later with
+   `/resolve-conflict <file>`, which records their decision and archives the conflict.
 7. Update `<eng>/INDEX.md`: the theory with its TL;DR and per-question coverage, plus any new
    quarantine entries in the review queue section.
 8. The gate hook (via `.claude/scripts/append_log.sh`) already committed this Work Block automatically inside the engagement's own repo — do not run `git add`/`git commit` yourself. Read the last line of `<eng>/telemetry/execution.log` for the `WB-ID` if you need it for your report to the operator.

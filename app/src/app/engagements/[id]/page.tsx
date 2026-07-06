@@ -43,7 +43,7 @@ export default async function EngagementPage({
         </div>
         <p className="text-sm text-ink-dim">{engagement.focus ?? "No focus set."}</p>
         <p className="font-mono text-xs text-ink-dim">
-          checkpoint {engagement.lastCheckpoint ?? "—"} · last activity{" "}
+          checkpoint {formatTime(engagement.lastCheckpoint)} · last activity{" "}
           {formatTime(engagement.lastActivity)}
         </p>
       </header>

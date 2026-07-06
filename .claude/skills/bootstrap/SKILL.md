@@ -43,7 +43,7 @@ Run this before any other Sensai Compilar command in a fresh checkout.
    `goals/`, `goals/audits/`,
    `research_body/{00_inbox,01_raw,02_nodes,03_archive,04_quarantine}`,
    `outcomes/{01_theories,02_economic_models,03_verification,04_alignment,05_broadcast,longitudinal}`,
-   `telemetry/execution.log` (with the header row `TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS`),
+   `telemetry/execution.log` (with the header row `TIMESTAMP | PHASE | WORK_BLOCK | TARGET | STATUS | COST`),
    `.gitignore` (must contain `.rejected/`), and `INDEX.md`. Create anything missing — including
    `git -C engagements/<name> init -q` if an engagement predates this feature and has no
    `.git` yet (this is a real, expected case for engagements created before repo-per-engagement

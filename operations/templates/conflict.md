@@ -2,8 +2,10 @@
 Progressive Disclosure schema for Quarantine Protocol entries (research_body/04_quarantine/).
 Frontmatter fields are load-bearing: the gate hook parses `type` and `status` literally.
 These are HUMAN-IN-THE-LOOP review items: the pipeline files them and carries them as open risks,
-but never resolves them autonomously. To resolve: a human edits `resolution:`, sets
-`status: resolved`, and moves the file to research_body/03_archive/.
+but never resolves them autonomously. To resolve, run `/resolve-conflict <file>`: it records the
+operator's decision (edits `resolution:`, sets `status: resolved`, appends a `## Resolution` section)
+and archives the file to research_body/03_archive/. `status: deferred` parks one pending outside
+evidence without archiving it.
 -->
 ---
 type: conflict
