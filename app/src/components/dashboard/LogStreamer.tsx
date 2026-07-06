@@ -3,18 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, Terminal } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { STATUS_COLOR, PHASE_ICON, ALL_PHASES } from "@/lib/constants";
+import { resolveTargetPath } from "@/lib/logHelpers";
+import { useDrawer } from "./MarkdownDrawer";
 import type { LogRow } from "@/lib/types";
 
 interface TaggedRow extends LogRow {
   engagement: string;
 }
-
-const STATUS_COLOR: Record<string, string> = {
-  SUCCESS: "text-emerald",
-  PASS: "text-emerald",
-  FAIL: "text-red-400",
-  BLOCKED: "text-red-400",
-};
 
 async function fetchLog(engagement: string): Promise<TaggedRow[]> {
   const res = await fetch(`/api/log?engagement=${encodeURIComponent(engagement)}`);
@@ -23,10 +19,77 @@ async function fetchLog(engagement: string): Promise<TaggedRow[]> {
   return (data.rows ?? []).map((r) => ({ ...r, engagement }));
 }
 
+function PhaseFilter({
+  enabled,
+  toggle,
+}: {
+  enabled: Set<string>;
+  toggle: (phase: string) => void;
+}) {
+  return (
+    <details className="mb-2">
+      <summary className="cursor-pointer select-none font-mono text-xs text-ink-dim hover:text-ink">
+        phases ▾
+      </summary>
+      <div className="mt-1 flex flex-wrap gap-2 font-mono text-[10px]">
+        {ALL_PHASES.map((phase) => (
+          <label key={phase} className="flex cursor-pointer items-center gap-1">
+            <input
+              type="checkbox"
+              checked={enabled.has(phase)}
+              onChange={() => toggle(phase)}
+              className="accent-emerald"
+            />
+            {phase}
+          </label>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function LogRow({ row }: { row: TaggedRow }) {
+  const { openFile } = useDrawer();
+  const Icon = PHASE_ICON[row.phase.toUpperCase()];
+  const statusClass = STATUS_COLOR[row.status.toUpperCase()] ?? "text-ink-dim";
+  const targetPath = resolveTargetPath(row.engagement, row.phase, row.target);
+
+  return (
+    <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+      <span className="text-ink-dim">{row.timestamp}</span>
+      <span className="text-emerald/70">[{row.engagement}]</span>
+      <span className="flex items-center gap-1 text-ink">
+        {Icon && <Icon className="inline h-3 w-3" />}
+        {row.phase}
+      </span>
+      <span className="text-ink-dim">{row.workBlock}</span>
+      {targetPath ? (
+        <button
+          onClick={() => openFile(targetPath)}
+          className="truncate underline decoration-dotted text-ink-dim hover:text-emerald transition-colors text-left"
+          title={targetPath}
+        >
+          {row.target}
+        </button>
+      ) : (
+        <span className="truncate text-ink-dim">{row.target}</span>
+      )}
+      <span className={cn("font-semibold", statusClass)}>{row.status}</span>
+    </div>
+  );
+}
+
 /** Read-only, IDE-style streaming view of execution.log across engagements. Polls every 6s. */
-export function LogStreamer({ engagements, limit = 40 }: { engagements: string[]; limit?: number }) {
+export function LogStreamer({
+  engagements,
+  limit = 40,
+}: {
+  engagements: string[];
+  limit?: number;
+}) {
   const [rows, setRows] = useState<TaggedRow[]>([]);
   const [open, setOpen] = useState(true);
+  const [enabledPhases, setEnabledPhases] = useState<Set<string>>(new Set(ALL_PHASES));
 
   const refresh = useCallback(async () => {
     const all = (await Promise.all(engagements.map(fetchLog))).flat();
@@ -40,6 +103,15 @@ export function LogStreamer({ engagements, limit = 40 }: { engagements: string[]
     return () => clearInterval(t);
   }, [refresh]);
 
+  const togglePhase = (phase: string) =>
+    setEnabledPhases((prev) => {
+      const next = new Set(prev);
+      next.has(phase) ? next.delete(phase) : next.add(phase);
+      return next;
+    });
+
+  const visible = rows.filter((r) => enabledPhases.has(r.phase.toUpperCase()));
+
   return (
     <div className="overflow-hidden rounded-lg border border-edge bg-void">
       <button
@@ -50,29 +122,23 @@ export function LogStreamer({ engagements, limit = 40 }: { engagements: string[]
         <span className="flex items-center gap-2 text-sm font-medium text-ink">
           <Terminal className="h-4 w-4 text-emerald" />
           Live Log Stream
-          <span className="font-mono text-xs text-ink-dim">({rows.length})</span>
+          <span className="font-mono text-xs text-ink-dim">({visible.length})</span>
         </span>
         <ChevronDown className={cn("h-4 w-4 text-ink-dim transition-transform", !open && "-rotate-90")} />
       </button>
 
       {open && (
-        <div className="max-h-72 overflow-y-auto border-t border-edge px-4 py-3 font-mono text-xs leading-6">
-          {rows.length === 0 ? (
-            <p className="text-ink-dim">no telemetry yet…</p>
-          ) : (
-            rows.map((r, i) => (
-              <div key={`${r.engagement}-${r.workBlock}-${i}`} className="flex flex-wrap gap-x-2">
-                <span className="text-ink-dim">{r.timestamp}</span>
-                <span className="text-emerald/70">[{r.engagement}]</span>
-                <span className="text-ink">{r.phase}</span>
-                <span className="text-ink-dim">{r.workBlock}</span>
-                <span className="truncate text-ink-dim">{r.target}</span>
-                <span className={cn("font-semibold", STATUS_COLOR[r.status.toUpperCase()] ?? "text-ink-dim")}>
-                  {r.status}
-                </span>
-              </div>
-            ))
-          )}
+        <div className="border-t border-edge px-4 py-3 font-mono text-xs leading-6">
+          <PhaseFilter enabled={enabledPhases} toggle={togglePhase} />
+          <div className="max-h-72 overflow-y-auto">
+            {visible.length === 0 ? (
+              <p className="text-ink-dim">no telemetry yet…</p>
+            ) : (
+              visible.map((r, i) => (
+                <LogRow key={`${r.engagement}-${r.workBlock}-${i}`} row={r} />
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>

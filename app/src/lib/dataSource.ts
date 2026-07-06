@@ -3,7 +3,7 @@ import { promises as fs } from "node:fs";
 import { resolveSafe } from "./sandbox";
 import { listDir, countFiles, readMarkdown, parseLog } from "./fileParser";
 import { logError } from "./errors";
-import { PIPELINE, INPUT_STAGES, OUTPUT_STAGES } from "./pipeline";
+import { PIPELINE, PIPELINE_SIDEBAR, INPUT_STAGES, OUTPUT_STAGES } from "./pipeline";
 import type {
   ArtifactCard,
   DirEntry,
@@ -49,19 +49,51 @@ class FsDataSource implements DataSource {
     return entries.filter((e) => e.type === "dir").map((e) => e.name);
   }
 
+  private async parseMilestones(
+    id: string,
+  ): Promise<{ done: number; total: number } | null> {
+    try {
+      const file = await readMarkdown(
+        path.posix.join("engagements", id, "goals", "active_milestones.md"),
+      );
+      if (!file) return null;
+      const done = (file.body.match(/^\s*-\s*\[x\]/gim) ?? []).length;
+      const pending = (file.body.match(/^\s*-\s*\[\s\]/gm) ?? []).length;
+      const total = done + pending;
+      return total > 0 ? { done, total } : null;
+    } catch {
+      return null;
+    }
+  }
+
   private async summarize(id: string, active: string | null): Promise<EngagementSummary> {
     const base = path.posix.join("engagements", id);
 
-    // Stage counts from the pipeline registry.
-    const stages: StageCount[] = await Promise.all(
-      PIPELINE.map(async (s) => ({
-        key: s.key,
-        label: s.label,
-        count: await countFiles(path.posix.join(base, s.dir)),
-      })),
-    );
+    // Stage counts from the pipeline registry (includes quarantine now).
+    const [stages, sidebarRaw, milestones] = await Promise.all([
+      Promise.all(
+        PIPELINE.map(async (s) => ({
+          key: s.key,
+          label: s.label,
+          count: await countFiles(path.posix.join(base, s.dir)),
+        })),
+      ),
+      Promise.all(
+        PIPELINE_SIDEBAR.map(async (s) => ({
+          key: s.key,
+          count: await countFiles(path.posix.join(base, s.dir)),
+        })),
+      ),
+      this.parseMilestones(id),
+    ]);
+
     const countFor = (keys: readonly { key: string }[]) =>
       stages.filter((s) => keys.some((k) => k.key === s.key)).reduce((n, s) => n + s.count, 0);
+
+    const sidebarCounts = {
+      inbox: sidebarRaw.find((s) => s.key === "inbox")?.count ?? 0,
+      archive: sidebarRaw.find((s) => s.key === "archive")?.count ?? 0,
+    };
 
     // INDEX.md frontmatter for focus/status/checkpoint.
     const index = await readMarkdown(path.posix.join(base, "INDEX.md"));
@@ -80,11 +112,13 @@ class FsDataSource implements DataSource {
       status: asString(fm.status),
       lastCheckpoint: asString(fm.last_checkpoint),
       active: id === active,
-      stages,
+      stages: stages as StageCount[],
       inputCount: countFor(INPUT_STAGES),
       outputCount: countFor(OUTPUT_STAGES),
       lastActivity,
       recentlyActive,
+      milestones,
+      sidebarCounts,
     };
   }
 
@@ -121,7 +155,7 @@ class FsDataSource implements DataSource {
 
   async getPipeline(engagement: string): Promise<PipelineColumn[]> {
     const base = path.posix.join("engagements", engagement);
-    return Promise.all(
+    const columns = await Promise.all(
       PIPELINE.map(async (stage): Promise<PipelineColumn> => {
         const entries = await this.getTree(path.posix.join(base, stage.dir));
         const cards: ArtifactCard[] = await Promise.all(
@@ -129,12 +163,25 @@ class FsDataSource implements DataSource {
             .filter((e) => e.type === "file" && e.name.endsWith(".md"))
             .map(async (e): Promise<ArtifactCard> => {
               const file = await readMarkdown(e.path);
-              return { name: e.name, path: e.path, frontmatter: file?.frontmatter ?? {} };
+              return {
+                name: e.name,
+                path: e.path,
+                frontmatter: file?.frontmatter ?? {},
+                modified: e.modified,
+              };
             }),
         );
-        return { key: stage.key, label: stage.label, hint: stage.hint, cards };
+        // Sort newest-first by mtime.
+        const sorted = [...cards].sort((a, b) => {
+          if (!a.modified && !b.modified) return 0;
+          if (!a.modified) return 1;
+          if (!b.modified) return -1;
+          return new Date(b.modified).getTime() - new Date(a.modified).getTime();
+        });
+        return { key: stage.key, label: stage.label, hint: stage.hint, cards: sorted };
       }),
     );
+    return columns;
   }
 
   async getGlobalTelemetry(): Promise<GlobalTelemetry> {
@@ -146,9 +193,15 @@ class FsDataSource implements DataSource {
       );
     return {
       engagements: engagements.length,
+      activeEngagement: engagements.find((e) => e.active)?.id ?? null,
       nodes: sumStage("nodes"),
       theories: sumStage("theories"),
       economicModels: sumStage("economic"),
+      verification: sumStage("verification"),
+      alignment: sumStage("alignment"),
+      broadcast: sumStage("broadcast"),
+      quarantined: sumStage("quarantine"),
+      archived: engagements.reduce((n, e) => n + e.sidebarCounts.archive, 0),
     };
   }
 }

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { EnsoLoader } from "@/components/ui/EnsoLoader";
 import { MonospaceTag } from "@/components/ui/MonospaceTag";
 import { renderMarkdown } from "@/lib/markdown";
+import { VERDICT_TEXT_COLOR } from "@/lib/constants";
 import type { ParsedFile } from "@/lib/types";
 
 interface DrawerContextValue {
@@ -15,29 +16,61 @@ interface DrawerContextValue {
 
 const DrawerContext = createContext<DrawerContextValue | null>(null);
 
-/** Any client component can call `useDrawer().openFile(path)` to slide the artifact in. */
 export function useDrawer(): DrawerContextValue {
   const ctx = useContext(DrawerContext);
   if (!ctx) throw new Error("useDrawer must be used within <DrawerProvider>");
   return ctx;
 }
 
+const PRIORITY_KEYS = [
+  "type",
+  "status",
+  "verdict",
+  "work_block",
+  "model",
+  "phase",
+  "created",
+  "source",
+  "slug",
+];
+
+function sortFrontmatter(entries: [string, unknown][]): [string, unknown][] {
+  const priority = entries
+    .filter(([k]) => PRIORITY_KEYS.includes(k))
+    .sort(([a], [b]) => PRIORITY_KEYS.indexOf(a) - PRIORITY_KEYS.indexOf(b));
+  const rest = entries
+    .filter(([k]) => !PRIORITY_KEYS.includes(k))
+    .sort(([a], [b]) => a.localeCompare(b));
+  return [...priority, ...rest];
+}
+
+function valueClass(key: string, value: unknown): string {
+  const v = String(value);
+  if (key === "status" && v === "ready") return "text-emerald";
+  if (key === "verdict") return VERDICT_TEXT_COLOR[v] ?? "text-ink";
+  return "text-ink";
+}
+
+function isPriorityKey(key: string): boolean {
+  return PRIORITY_KEYS.includes(key);
+}
+
 export function DrawerProvider({ children }: { children: React.ReactNode }) {
-  const [path, setPath] = useState<string | null>(null);
+  const [filePath, setFilePath] = useState<string | null>(null);
   const [file, setFile] = useState<ParsedFile | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const openFile = useCallback((p: string) => setPath(p), []);
-  const close = useCallback(() => setPath(null), []);
+  const openFile = useCallback((p: string) => setFilePath(p), []);
+  const close = useCallback(() => setFilePath(null), []);
 
   useEffect(() => {
-    if (!path) return;
+    if (!filePath) return;
     let cancelled = false;
     setLoading(true);
     setError(null);
     setFile(null);
-    fetch(`/api/file?path=${encodeURIComponent(path)}`)
+    fetch(`/api/file?path=${encodeURIComponent(filePath)}`)
       .then(async (res) => {
         if (!res.ok) throw new Error(`Failed to load (${res.status})`);
         return res.json() as Promise<ParsedFile>;
@@ -45,7 +78,7 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
       .then((data) => {
         if (!cancelled) setFile(data);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         if (!cancelled) setError(err.message);
       })
       .finally(() => {
@@ -54,23 +87,25 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [path]);
+  }, [filePath]);
 
-  // Esc closes.
   useEffect(() => {
-    if (!path) return;
+    if (!filePath) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [path, close]);
+  }, [filePath, close]);
 
-  const frontmatterEntries = file ? Object.entries(file.frontmatter) : [];
+  const allEntries = file ? Object.entries(file.frontmatter) : [];
+  const sortedEntries = sortFrontmatter(allEntries);
+  const priorityEntries = sortedEntries.filter(([k]) => isPriorityKey(k));
+  const restEntries = sortedEntries.filter(([k]) => !isPriorityKey(k));
 
   return (
     <DrawerContext.Provider value={{ openFile, close }}>
       {children}
       <AnimatePresence>
-        {path && (
+        {filePath && (
           <>
             <motion.div
               className="fixed inset-0 z-[60] bg-void/70 backdrop-blur-sm"
@@ -88,7 +123,7 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
             >
               <header className="flex items-start justify-between gap-3 border-b border-edge px-4 py-3">
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-xs text-ink-dim">{path}</p>
+                  <p className="truncate font-mono text-xs text-ink-dim">{filePath}</p>
                   {file && (
                     <h2 className="truncate text-sm font-semibold text-ink">{file.name}</h2>
                   )}
@@ -103,11 +138,26 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
                 </button>
               </header>
 
-              {frontmatterEntries.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 border-b border-edge bg-void/40 px-4 py-3">
-                  {frontmatterEntries.map(([k, v]) => (
-                    <MonospaceTag key={k} label={k} value={String(v)} />
-                  ))}
+              {sortedEntries.length > 0 && (
+                <div className="border-b border-edge bg-void/40 px-4 py-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {priorityEntries.map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center gap-1 font-mono text-[11px]">
+                        <span className="text-ink-dim">{k}:</span>
+                        <span className={valueClass(k, v)}>{String(v)}</span>
+                      </span>
+                    ))}
+                  </div>
+                  {restEntries.length > 0 && (
+                    <>
+                      <hr className="my-2 border-edge/20" />
+                      <div className="flex flex-wrap gap-1.5">
+                        {restEntries.map(([k, v]) => (
+                          <MonospaceTag key={k} label={k} value={String(v)} />
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

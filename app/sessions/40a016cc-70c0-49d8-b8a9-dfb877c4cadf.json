@@ -1,0 +1,18 @@
+{
+  "id": "40a016cc-70c0-49d8-b8a9-dfb877c4cadf",
+  "title": "What is the demo corpus about?",
+  "engagement": [
+    "compilar"
+  ],
+  "model": "claude-sonnet-4-6",
+  "createdAt": "2026-07-06T09:26:20.969Z",
+  "updatedAt": "2026-07-06T09:26:31.102Z",
+  "messages": [
+    {
+      "id": "fce59e07-db9d-4440-9176-64f9ad964bad",
+      "role": "user",
+      "content": "What is the demo corpus about?",
+      "timestamp": "2026-07-06T09:26:31Z"
+    }
+  ]
+}

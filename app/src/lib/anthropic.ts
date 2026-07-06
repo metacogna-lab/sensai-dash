@@ -7,7 +7,7 @@
  * to make the single outbound request auditable in the network tab.
  *
  * Requires the `anthropic-dangerous-direct-browser-access` header, which opts into
- * the CORS-enabled browser path. Model ids per CLAUDE.md: default claude-opus-4-8.
+ * the CORS-enabled browser path.
  */
 
 const ENDPOINT = "https://api.anthropic.com/v1/messages";
@@ -16,11 +16,13 @@ const KEY_STORAGE = "sensai.anthropic_key";
 
 export const SYNTHESIS_MODELS = [
   { id: "claude-opus-4-8", label: "Opus 4.8 (deepest)" },
-  { id: "claude-sonnet-5", label: "Sonnet 5 (balanced)" },
-  { id: "claude-haiku-4-5", label: "Haiku 4.5 (fast)" },
+  { id: "claude-sonnet-4-6", label: "Sonnet 4.6 (balanced)" },
+  { id: "claude-haiku-4-5-20251001", label: "Haiku 4.5 (fast)" },
 ] as const;
 
-export const DEFAULT_MODEL = SYNTHESIS_MODELS[0].id;
+export type SynthesisModelId = (typeof SYNTHESIS_MODELS)[number]["id"];
+
+export const DEFAULT_MODEL: SynthesisModelId = SYNTHESIS_MODELS[0].id;
 
 /** sessionStorage helpers — key lives only for the browser session. */
 export const keyStore = {
@@ -36,11 +38,19 @@ export const keyStore = {
   },
 };
 
+export interface AnthropicMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export interface SynthesisRequest {
   apiKey: string;
   model?: string;
   system: string;
-  prompt: string;
+  /** Single-turn convenience: wrapped into messages = [{role:"user", content:prompt}]. */
+  prompt?: string;
+  /** Multi-turn: full message history. Takes precedence over `prompt`. */
+  messages?: AnthropicMessage[];
   maxTokens?: number;
   signal?: AbortSignal;
 }
@@ -52,6 +62,13 @@ export interface SynthesisRequest {
 export async function* streamSynthesis(
   req: SynthesisRequest,
 ): AsyncGenerator<string, void, unknown> {
+  const anthropicMessages: AnthropicMessage[] =
+    req.messages ?? (req.prompt ? [{ role: "user", content: req.prompt }] : []);
+
+  if (anthropicMessages.length === 0) {
+    throw new Error("streamSynthesis requires either messages or prompt");
+  }
+
   const res = await fetch(ENDPOINT, {
     method: "POST",
     signal: req.signal,
@@ -66,7 +83,7 @@ export async function* streamSynthesis(
       max_tokens: req.maxTokens ?? 16000,
       stream: true,
       system: req.system,
-      messages: [{ role: "user", content: req.prompt }],
+      messages: anthropicMessages,
     }),
   });
 

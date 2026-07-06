@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { dataSource } from "@/lib/dataSource";
 import { PipelineBoard } from "@/components/dashboard/PipelineBoard";
 import { LogStreamer } from "@/components/dashboard/LogStreamer";
+import { RunStatusMatrix } from "@/components/dashboard/RunStatusMatrix";
 import { formatTime } from "@/lib/markdown";
 
 export const runtime = "nodejs";
@@ -19,6 +20,7 @@ export default async function EngagementPage({
   if (!engagement) notFound();
 
   const columns = await dataSource.getPipeline(id);
+  const { inbox, archive } = engagement.sidebarCounts;
 
   return (
     <div className="space-y-6">
@@ -46,7 +48,25 @@ export default async function EngagementPage({
           checkpoint {formatTime(engagement.lastCheckpoint)} · last activity{" "}
           {formatTime(engagement.lastActivity)}
         </p>
+        <div className="flex gap-4 font-mono text-xs text-ink-dim">
+          <span>
+            inbox:{" "}
+            <span className={inbox > 0 ? "text-ink" : ""}>{inbox}</span>
+            {inbox > 0 && " queued"}
+          </span>
+          <span className="text-ink-dim/30">·</span>
+          <span>
+            archive: <span className="text-emerald/70">{archive}</span> consumed
+          </span>
+        </div>
       </header>
+
+      <section aria-label="Run Status">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-ink-dim">
+          Run Status
+        </h2>
+        <RunStatusMatrix engagementId={id} />
+      </section>
 
       <section aria-label="Pipeline">
         <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-ink-dim">
