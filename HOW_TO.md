@@ -1,4 +1,4 @@
-# HOW TO: Running the Sensai Compilar Pipeline
+# HOW TO: Running the Sensai Mission Control Pipeline
 
 A practical operator guide. Architecture lives in [operations/README.md](operations/README.md); this
 is the "what do I type, what happens, what do I do when it stops" manual. Everything here runs

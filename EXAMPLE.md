@@ -1,6 +1,6 @@
-# Sensai Compilar Pipeline Example
+# Sensai Mission Control Pipeline Example
 
-This guide walks through a complete end-to-end example of the Sensai Compilar research pipeline, from initialization through final synthesis and broadcast.
+This guide walks through a complete end-to-end example of the Sensai Mission Control research pipeline, from initialization through final synthesis and broadcast.
 
 ## Overview
 
@@ -551,7 +551,7 @@ Implementing a 13-phase research pipeline increases strategic decision velocity 
 - Target state: Structured pipeline, 20-day insight cycles, 0.5% error rate
 - Gap: Methodology rigor + coordination overhead
 
-## Recommended Solution: Sensai Compilar Pipeline
+## Recommended Solution: Sensai Mission Control Pipeline
 - 13-phase architecture with discrete gates
 - Parallel processing where possible
 - Continuous verification and conflict resolution

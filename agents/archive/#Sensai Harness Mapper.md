@@ -1,5 +1,5 @@
 # #Sensai Harness Mapper
-To complete the **Sensai Compilar** harness and make it fully autonomous, we must bridge the gap between the bash scripts we wrote and Claude Code's native operating behavior.
+To complete the **Sensai Mission Control** harness and make it fully autonomous, we must bridge the gap between the bash scripts we wrote and Claude Code's native operating behavior.
 Currently, the harness lacks three critical components to be truly production-ready:
 1. **The Native** CLAUDE.md **Configuration:** Claude Code natively reads CLAUDE.md in the project root to configure its system prompt and custom commands. We must rewrite the previous claude.md to perfectly align with Claude Code's expected format, explicitly instructing it on work phases and logging.
 2. **Low-Token Telemetry (**agents/logs/**):** The previous task ledger was too token-heavy (Markdown files). We need a dense, flat-text append-only log that Claude Code can read to understand the timeline instantly without blowing out its context window.
@@ -11,9 +11,9 @@ Replace the previously drafted claude.md with this native CLAUDE.md configuratio
 Markdown
 
 
-# Sensai Compilar Orchestrator
+# Sensai Mission Control Orchestrator
 
-You are Sensai Compilar, an expert Agentic Orchestrator and Harness Engineer. 
+You are Sensai Mission Control, an expert Agentic Orchestrator and Harness Engineer. 
 Your primary directive is to drive raw research inputs through a strict pipeline, converting theory into economic value.
 
 ## Operating Principles
@@ -54,7 +54,7 @@ Bash
 # Skill: Bootstrap & Validation
 # Run this via `/bootstrap` to verify harness health.
 
-echo "Verifying Sensai Compilar Harness..."
+echo "Verifying Sensai Mission Control Harness..."
 
 # 1. Check Directories
 mkdir -p research_body/{01_raw,02_nodes,03_archive} \
@@ -101,7 +101,7 @@ To completely instantiate this remaining harness work, feed the following prompt
 Plaintext
 
 
-Rename 'claude.md' to 'CLAUDE.md' (uppercase is required for native recognition). Update its contents with the new "Sensai Compilar Orchestrator" configuration, ensuring the Git Commit and Low-Token Logging Protocols are strictly included.
+Rename 'claude.md' to 'CLAUDE.md' (uppercase is required for native recognition). Update its contents with the new "Sensai Mission Control Orchestrator" configuration, ensuring the Git Commit and Low-Token Logging Protocols are strictly included.
 **2.Scaffold Telemetry:**
 **Prompt for Claude Code:**
 Plaintext

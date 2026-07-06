@@ -1,4 +1,4 @@
-# Sensai Compilar — AGENTS.md
+# Sensai Mission Control — AGENTS.md
 
 This is a **Claude Code-native pipeline harness**, not a conventional codebase. No build, lint, typecheck, or codegen scripts exist. The "code" is agent/skill markdown + bash hook scripts. See `CLAUDE.md` for the full architectural map.
 

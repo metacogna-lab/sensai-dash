@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-`sensai-finder` is the home of **Sensai Compilar**, an agentic research-and-development pipeline
+`sensai-finder` is the home of **Sensai Mission Control**, an agentic research-and-development pipeline
 crossed with an LLM wiki: raw sources (PDFs, papers, transcripts) are driven through gated phases —
 question calibration → extraction → node consumption → corpus indexing → theory synthesis →
 economic evaluation → verification → macro-synthesis — into verified strategic deliverables. The

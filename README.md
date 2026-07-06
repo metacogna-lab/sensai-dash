@@ -1,8 +1,8 @@
-# 🧠 Sensai Compilar
+# 🧠 Sensai Mission Control
 
 **An agentic research-and-development pipeline that transforms raw research into verified strategic deliverables.**
 
-Sensai Compilar is a Claude Code-native system that takes PDFs, papers, transcripts, and notes and ruthlessly distills them into:
+Sensai Mission Control is a Claude Code-native system that takes PDFs, papers, transcripts, and notes and ruthlessly distills them into:
 - **Verified theories** backed by source material
 - **Economic models** with concrete monetization vectors
 - **Strategic alignment documents** with step-by-step execution plans
@@ -106,7 +106,7 @@ docker-compose down -v
 
 ## 🔄 The Pipeline
 
-Sensai Compilar is a **13-phase pipeline** that turns research into answers:
+Sensai Mission Control is a **13-phase pipeline** that turns research into answers:
 
 ```
 INPUT PHASE              ANALYSIS PHASE           EVALUATION PHASE
@@ -347,7 +347,7 @@ Check the output — it will tell you why. Common issues:
 
 ## 📚 What This Replaces
 
-Sensai Compilar eliminates:
+Sensai Mission Control eliminates:
 - ❌ Manually copy-pasting quotes between 10 open documents
 - ❌ Theories that sound good but aren't grounded in sources
 - ❌ Economic models with no clear path to monetization

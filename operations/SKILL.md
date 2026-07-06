@@ -1,4 +1,4 @@
-# Sensai Compilar: Skill & Agent Standard
+# Sensai Mission Control: Skill & Agent Standard
 
 Every new pipeline phase is a pair: a native subagent in `.claude/agents/*.md` (the cognitive work,
 model-routed) and a native skill in `.claude/skills/<name>/SKILL.md` (the orchestration: read

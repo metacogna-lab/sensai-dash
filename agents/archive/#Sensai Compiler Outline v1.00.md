@@ -1,5 +1,5 @@
 # #Sensai Compiler Outline v1.00
-Here is the execution layer for **Sensai Compilar**.
+Here is the execution layer for **Sensai Mission Control**.
 To achieve modular sub-agent spawning and strict model routing, we will implement a central bash-based router. This router acts as the nervous system, dispatching API calls to the specific models (Haiku, Sonnet, Opus, Fable) based on the cognitive load of the task.
 We will also establish session.md to track the temporal state of your pipeline, ensuring Claude Code has a persistent memory of active sub-agents and pipeline progress.
 ### 1\. The Session Tracker:session.md
@@ -13,7 +13,7 @@ current*_focus: [Insert active theory or ingestion target]
 active_*sub*_agents: [0]
 last_*checkpoint: 2026-07-04T22:10:57
 ---
-# Sensai Compilar: Session State
+# Sensai Mission Control: Session State
 
 > ****TL;DR:**** [One-sentence summary of the current economic objective]
 
@@ -40,7 +40,7 @@ Bash
 
 
 #!/bin/bash
-# Sensai Compilar: Central Model Router
+# Sensai Mission Control: Central Model Router
 # Usage: ./router.sh <model_class> <system_prompt> <user_prompt> <output_file>
 
 MODEL_CLASS=$1
@@ -89,14 +89,14 @@ Bash
 
 
 #!/bin/bash
-# CLI Wrapper for Sensai Compilar commands
+# CLI Wrapper for Sensai Mission Control commands
 
 COMMAND=$1
 TARGET=$2
 
 case $COMMAND in
     "/init")
-        echo "Initializing Sensai Compilar workspace..."
+        echo "Initializing Sensai Mission Control workspace..."
         mkdir -p research_body/{01_raw,02_nodes,03_archive} outcomes/{theories,economic_models,broadcast} skills templates
         ./skills/router.sh "fable" "You are a master planner." "Map the research horizon based on current session." "session.md"
         ;;

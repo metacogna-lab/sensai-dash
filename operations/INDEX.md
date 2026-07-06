@@ -4,7 +4,7 @@ active_engagement: isolation_demo
 last_checkpoint: 2026-07-05
 ---
 
-# Sensai Compilar — Global Wiki Home
+# Sensai Mission Control — Global Wiki Home
 
 > **TL;DR:** Harness (v2.20) is built and verified, including per-engagement standalone git
 > repos with automatic Work Block commits. Two engagements exist: `compilar` (has processed one

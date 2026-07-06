@@ -1,5 +1,5 @@
 # #Sensai Skills Mapper
-To move **Sensai Compilar** from a script-runner to a truly self-correcting agentic harness, we need rigorous evaluation loops (Evals) and a transparent execution trail.
+To move **Sensai Mission Control** from a script-runner to a truly self-correcting agentic harness, we need rigorous evaluation loops (Evals) and a transparent execution trail.
 When agents spawn sub-agents blindly, context drifts and costs spiral. We prevent this by forcing every sub-agent to register its intent, execution logs, and outputs in an immutable paper trail under agents/tasks/.
 ## 1\. Guiding Evals & Harness Elements
 An engine without telemetry is just code running in the dark. We implement two tiers of evaluation: **Structural Assertions** (deterministic checks) and **Alignment Evals** (LLM-as-a-Judge).
@@ -19,7 +19,7 @@ Feed this sequence of prompts directly to Claude Code to bootstrap the entire sy
 Plaintext
 
 
-Create the system directory tree for Project Sensai Compilar. Ensure the following structure is completely built out:
+Create the system directory tree for Project Sensai Mission Control. Ensure the following structure is completely built out:
 mkdir -p research_body/{01_raw,02_nodes,03_archive} outcomes/{theories,economic_models,broadcast} skills hooks agents/tasks templates
 **2.Phase 2: Master Controller Generation:**Establishes rules and baseline state.
 **Prompt for Claude Code:**
@@ -74,7 +74,7 @@ GOALS_CONTEXT=$(cat claude.md | grep -A 20 "## Operating Principles")
 SESSION_CONTEXT=$(cat session.md)
 
 # Prepare the prompt for Sonnet to parse alignment
-SYS_PROMPT="You are the Auditor of Sensai Compilar. Compare today's work logs against the system's operational goals and current session constraints. Identify where the agents wasted resources, where theories drifted from economic monetization, and generate exactly 3 critical questions the engineer must answer to get back on track."
+SYS_PROMPT="You are the Auditor of Sensai Mission Control. Compare today's work logs against the system's operational goals and current session constraints. Identify where the agents wasted resources, where theories drifted from economic monetization, and generate exactly 3 critical questions the engineer must answer to get back on track."
 
 USER_PROMPT="### Operational Goals:\n$GOALS_CONTEXT\n\n### Current Session State:\n$SESSION_CONTEXT\n\n### Executed Logs:\n$LOG_BUFFER"
 

@@ -45,9 +45,9 @@ Save the following block as init.md in your empty project directory.
 Markdown
 
 
-# Sensai Compilar: Harness Initialization Directives
+# Sensai Mission Control: Harness Initialization Directives
 
-****To Claude Code:**** You are Sensai Compilar. You are tasked with bootstrapping your own agentic harness. Execute the following phases sequentially. Do not skip steps. Log your progress.
+****To Claude Code:**** You are Sensai Mission Control. You are tasked with bootstrapping your own agentic harness. Execute the following phases sequentially. Do not skip steps. Log your progress.
 
 ## Phase 1: Structural Scaffolding
 Run the following bash commands to establish the directory tree:
@@ -71,7 +71,7 @@ Generate the core configuration files in the root directory:
 2. session.md: Initialize the active session state, setting active sub-agents to 0 and linking to the goals/active_milestones.md.
 
 ⠀Phase 5: Executable Bootstrapping
-1. Write the core skill scripts into the /skills directory (router.sh, api_wrapper.py, bootstrap.sh, etc.) based on standard Sensai Compilar architecture.
+1. Write the core skill scripts into the /skills directory (router.sh, api_wrapper.py, bootstrap.sh, etc.) based on standard Sensai Mission Control architecture.
 2. Write the /hooks/cli_wrapper.sh to route commands to the skills.
 2. Make all scripts executable:
 
@@ -88,6 +88,6 @@ chmod +x skills/*.sh hooks/*.sh skills/api_wrapper.py
 
 
 git add .
-git commit -m "[INIT] WB-000: Sensai Compilar harness scaffolded and verified"
+git commit -m "[INIT] WB-000: Sensai Mission Control harness scaffolded and verified"
 echo "$(date '+%Y-%m-%d %H:%M:%S') | INIT | WB-000 | Harness | SUCCESS" >> agents/logs/execution.log
 **Completion Trigger:** Once Phase 6 is complete, output a system readiness message and await your first /consume command.

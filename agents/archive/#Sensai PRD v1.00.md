@@ -1,11 +1,11 @@
 # #Sensai PRD v1.00
 
-# Product Requirements Document: Sensai Compilar Engine
+# Product Requirements Document: Sensai Mission Control Engine
 **Document Status:** Baseline / Active
 **Target Architecture:** Claude Code Native + Deterministic Shell Harness
 **Core Mandate:** Compile abstract research into deterministic economic value.
 # 1\. Executive Vision
-Sensai Compilar is not a conversational AI tool; it is a defense-grade, metacognitive value-generation compiler. It bridges the probabilistic nature of Large Language Models with the strict, deterministic requirements of systems engineering. Orchestrated entirely by Claude Code, the harness treats research, social dynamics theories, and open-source intelligence as raw kinetic fuel.
+Sensai Mission Control is not a conversational AI tool; it is a defense-grade, metacognitive value-generation compiler. It bridges the probabilistic nature of Large Language Models with the strict, deterministic requirements of systems engineering. Orchestrated entirely by Claude Code, the harness treats research, social dynamics theories, and open-source intelligence as raw kinetic fuel.
 Through a strictly gated state machine, it refines this fuel into deployable software architectures, economic models, and strategic assets. The system must natively support **multi-tenant engagements**—allowing parallel processing of distinct domains (e.g., social dynamics modeling, OSINT tactical platforms, legal routing systems) without context bleed.
 # 2\. Core Operating Principles
 * **Agentic Determinism:** Sub-agents (Haiku, Sonnet, Opus) perform the cognitive labor, but the *gates* between states are strictly computational (regex schema validation, zero-exit-code bash enforcement). If an LLM hallucinates a format, the system rejects it rather than corrupting the pipeline.

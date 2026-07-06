@@ -1,9 +1,9 @@
-# Sensai Compilar
+# Sensai Mission Control
 
 > Operator manual — what to type, what happens, how to respond when the pipeline stops:
 > [HOW_TO.md](../HOW_TO.md) (repo root).
 
-Sensai Compilar is an agentic research-and-development pipeline, orchestrated by Claude Code, that
+Sensai Mission Control is an agentic research-and-development pipeline, orchestrated by Claude Code, that
 takes raw research (PDFs, papers, transcripts, notes) and ruthlessly distills it into verified
 strategic answers, deployable product specs, and economic models. It is a one-way valve: research
 is fuel, not the deliverable.

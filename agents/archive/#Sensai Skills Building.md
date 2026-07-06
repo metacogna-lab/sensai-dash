@@ -1,6 +1,6 @@
 # #Sensai Skills Building
 ### 1\. Task Composition & Tool Call Architecture
-To ensure sub-agents don't hallucinate or drift into infinite loops, every action within Sensai Compilar operates on a strictly structured **Work Block (WB)** lifecycle.
+To ensure sub-agents don't hallucinate or drift into infinite loops, every action within Sensai Mission Control operates on a strictly structured **Work Block (WB)** lifecycle.
 Task composition is not conversational; it is computational.
 **The Work Block Lifecycle:**
 1. **Intent Declaration:** Claude Code reads /goals/active_milestones.md and declares a target.
@@ -53,7 +53,7 @@ This file dictates how Claude Code (or any engineer) must construct new modular 
 Markdown
 
 
-# Sensai Compilar: Modular Skill Standard
+# Sensai Mission Control: Modular Skill Standard
 
 Every new script added to `/skills` must adhere to this strict interface. Modular skills act as the nervous system connecting raw data to model APIs.
 
@@ -82,7 +82,7 @@ Copy this block and feed it directly to Claude Code. It instructs the agent to r
 Plaintext
 
 
-You are Sensai Compilar, an expert Agentic Orchestrator. We are initializing your kinetic value-generation harness. Execute the following Work Blocks sequentially.
+You are Sensai Mission Control, an expert Agentic Orchestrator. We are initializing your kinetic value-generation harness. Execute the following Work Blocks sequentially.
 
 1\. Build the Directory Tree: 
 Run standard bash commands to create the following directories in this workspace: `goals`, `research_body/01_raw`, `research_body/02_nodes`, `research_body/03_archive`, `outcomes/theories`, `outcomes/economic_models`, `outcomes/broadcast`, `skills`, `hooks`, `agents/logs`, and `templates`.
@@ -103,9 +103,9 @@ Once directories, telemetry, SKILL.md, and goals are created, stop execution. Ou
 Markdown
 
 
-# Sensai Compilar
+# Sensai Mission Control
 
-Sensai Compilar is an agentic, metacognitive value-generation engine orchestrated by Claude Code. It is designed to act as a one-way valve: taking raw research, academic frameworks, and social dynamics theories, and ruthlessly distilling them into deployable software architecture and economic models.
+Sensai Mission Control is an agentic, metacognitive value-generation engine orchestrated by Claude Code. It is designed to act as a one-way valve: taking raw research, academic frameworks, and social dynamics theories, and ruthlessly distilling them into deployable software architecture and economic models.
 
 ## Architectural Ethos
 - ****Kinetic Action over Static Storage:**** This is not a wiki. Research is treated as raw fuel. If a node does not map to a theory, and a theory does not map to an economic model, the pipeline is blocked.

@@ -1,6 +1,6 @@
 # #Sensai Hooks
 
-Here is the exact CLI command specification for the **Sensai Compilar** /hooks routing system.
+Here is the exact CLI command specification for the **Sensai Mission Control** /hooks routing system.
 To enable seamless multi-engagement capabilities without context bleed, the system uses a pointer file (/system/.active_engagement) to lock the bash scripts to a specific directory within /engagements/. Claude Code manages this state via the /switch command.
 ### 1\. Engagement Context Management
 Before executing pipeline tasks, Claude Code must ensure it is operating in the correct contextual silo. The CLI wrapper enforces this by checking the active pointer.
@@ -60,7 +60,7 @@ Bash
 
 
 ### #!/bin/bash
-### # Sensai Compilar: Central CLI Interceptor
+### # Sensai Mission Control: Central CLI Interceptor
 
 ### COMMAND=$1
 ### TARGET=${2//..\//} # Security: Strip path traversal attempts
